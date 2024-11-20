@@ -1,17 +1,17 @@
 package com.lootbeams;
 
 import com.lootbeams.compat.ApotheosisCompat;
+import com.lootbeams.modules.beam.BeamRenderer;
+import com.lootbeams.modules.tooltip.TooltipRenderer;
+import com.lootbeams.utils.Checker;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.ChatScreen;
-import net.minecraft.client.gui.screens.Overlay;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.sounds.WeighedSoundEvents;
-import net.minecraft.core.Vec3i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
@@ -20,7 +20,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.BowItem;
 import net.minecraft.world.item.CrossbowItem;
@@ -59,7 +58,7 @@ public class ClientSetup {
 
 	public static void init(FMLClientSetupEvent ignored) {
 		ignored.enqueueWork(() -> {
-			MinecraftForge.EVENT_BUS.addListener(ClientSetup::onRenderNameplate);
+			//MinecraftForge.EVENT_BUS.addListener(ClientSetup::onRenderNameplate);
 			MinecraftForge.EVENT_BUS.addListener(ClientSetup::onItemCreation);
 			MinecraftForge.EVENT_BUS.addListener(ClientSetup::entityRemoval);
 			MinecraftForge.EVENT_BUS.addListener(ClientSetup::onLevelRender);
@@ -99,7 +98,7 @@ public class ClientSetup {
 											.orElse(Screen.getTooltipFromItem(Minecraft.getInstance(), itemEntity.getItem()).get(0));
 							if(Configuration.SCREEN_TOOLTIPS_REQUIRE_CROUCH.get() && !player.isCrouching()) longestLine = tooltipLines.get(0);
 							x = (int)desiredScreenSpacePos.x() - 10 - Minecraft.getInstance().font.width(longestLine) / 2;
-							rarityX = (int)desiredScreenSpacePos.x() - 12 - Minecraft.getInstance().font.width(LootBeamRenderer.getRarity(itemEntity.getItem())) / 2;
+							rarityX = (int)desiredScreenSpacePos.x() - 12 - Minecraft.getInstance().font.width(BeamRenderer.getRarity(itemEntity.getItem())) / 2;
 							y = (int)desiredScreenSpacePos.y();
 						}
 						int guiScale = Minecraft.getInstance().options.guiScale().get();
@@ -109,10 +108,10 @@ public class ClientSetup {
 						if((Configuration.SCREEN_TOOLTIPS_REQUIRE_CROUCH.get() && player.isCrouching()) || !Configuration.SCREEN_TOOLTIPS_REQUIRE_CROUCH.get()) {
 							event.getGuiGraphics().renderTooltip(Minecraft.getInstance().font, itemEntity.getItem(), x, y);
 						} else {
-							tooltipLines = List.of(tooltipLines.get(0), Component.literal(LootBeamRenderer.getRarity(itemEntity.getItem())).withStyle(itemEntity.getItem().getDisplayName().getStyle()));
+							tooltipLines = List.of(tooltipLines.get(0), Component.literal(BeamRenderer.getRarity(itemEntity.getItem())).withStyle(itemEntity.getItem().getDisplayName().getStyle()));
 							if(ModList.get().isLoaded("apotheosis")) {
 								if(ApotheosisCompat.isApotheosisItem(itemEntity.getItem())) {
-									tooltipLines = List.of(tooltipLines.get(0), Component.literal(LootBeamRenderer.getRarity(itemEntity.getItem())).withStyle(s -> s.withColor(ApotheosisCompat.getRarityColor(itemEntity.getItem()))));
+									tooltipLines = List.of(tooltipLines.get(0), Component.literal(BeamRenderer.getRarity(itemEntity.getItem())).withStyle(s -> s.withColor(ApotheosisCompat.getRarityColor(itemEntity.getItem()))));
 								}
 							}
 							if(Configuration.COMBINE_NAME_AND_RARITY.get()) {
@@ -194,9 +193,9 @@ public class ClientSetup {
 
 	public static void onItemCreation(EntityJoinLevelEvent event){
 		if (event.getEntity() instanceof ItemEntity ie) {
-			LootBeamRenderer.TOOLTIP_CACHE.computeIfAbsent(ie, itemEntity -> itemEntity.getItem().getTooltipLines(null, TooltipFlag.Default.NORMAL));
-			if (!LootBeamRenderer.LIGHT_CACHE.contains(ie)) {
-				LootBeamRenderer.LIGHT_CACHE.add(ie);
+			TooltipRenderer.TOOLTIP_CACHE.computeIfAbsent(ie, itemEntity -> itemEntity.getItem().getTooltipLines(null, TooltipFlag.Default.NORMAL));
+			if (!BeamRenderer.LIGHT_CACHE.contains(ie)) {
+				BeamRenderer.LIGHT_CACHE.add(ie);
 			}
 		}
 	}
@@ -218,16 +217,16 @@ public class ClientSetup {
 
 	public static void entityRemoval(EntityLeaveLevelEvent event) {
 		if (event.getEntity() instanceof ItemEntity ie) {
-			LootBeamRenderer.TOOLTIP_CACHE.remove(ie);
-			LootBeamRenderer.LIGHT_CACHE.remove(ie);
+			TooltipRenderer.TOOLTIP_CACHE.remove(ie);
+			BeamRenderer.LIGHT_CACHE.remove(ie);
 		}
 	}
 
 	public static int overrideLight(ItemEntity ie, int light) {
 		if (Configuration.ALL_ITEMS.get()
-				|| (Configuration.ONLY_EQUIPMENT.get() && isEquipmentItem(ie.getItem().getItem()))
-				|| (Configuration.ONLY_RARE.get() && LootBeamRenderer.compatRarityCheck(ie, false))
-				|| (isItemInRegistryList(Configuration.WHITELIST.get(), ie.getItem().getItem()))) {
+				|| (Configuration.ONLY_EQUIPMENT.get() && Checker.isEquipmentItem(ie.getItem().getItem()))
+				|| (Configuration.ONLY_RARE.get() && BeamRenderer.compatRarityCheck(ie, false))
+				|| (Checker.isItemInRegistryList(Configuration.WHITELIST.get(), ie.getItem().getItem()))) {
 			light = 15728640;
 		}
 
@@ -242,10 +241,10 @@ public class ClientSetup {
 		}
 
 		Item item = itemEntity.getItem().getItem();
-		if ((Configuration.SOUND_ALL_ITEMS.get() && !isItemInRegistryList(Configuration.BLACKLIST.get(), item))
-				|| (Configuration.SOUND_ONLY_EQUIPMENT.get() && isEquipmentItem(item))
-				|| (Configuration.SOUND_ONLY_RARE.get() && LootBeamRenderer.compatRarityCheck(itemEntity, false))
-				|| isItemInRegistryList(Configuration.SOUND_ONLY_WHITELIST.get(), item)) {
+		if ((Configuration.SOUND_ALL_ITEMS.get() && !Checker.isItemInRegistryList(Configuration.BLACKLIST.get(), item))
+				|| (Configuration.SOUND_ONLY_EQUIPMENT.get() && Checker.isEquipmentItem(item))
+				|| (Configuration.SOUND_ONLY_RARE.get() && BeamRenderer.compatRarityCheck(itemEntity, false))
+				|| Checker.isItemInRegistryList(Configuration.SOUND_ONLY_WHITELIST.get(), item)) {
 			WeighedSoundEvents sound = Minecraft.getInstance().getSoundManager().getSoundEvent(LootBeams.LOOT_DROP);
 			if(sound != null && Minecraft.getInstance().level != null) {
 				Minecraft.getInstance().level.playSound(Minecraft.getInstance().player, itemEntity.getX(), itemEntity.getY(), itemEntity.getZ(), SoundEvent.createFixedRangeEvent(LootBeams.LOOT_DROP, 8.0f), SoundSource.AMBIENT, 0.1f * Configuration.SOUND_VOLUME.get().floatValue(), 1.0f);
@@ -254,50 +253,8 @@ public class ClientSetup {
 		}
 	}
 
-	public static void onRenderNameplate(RenderNameTagEvent event) {
-		if (!(event.getEntity() instanceof ItemEntity itemEntity)
-				|| Minecraft.getInstance().player.distanceToSqr(itemEntity) > Math.pow(Configuration.RENDER_DISTANCE.get(), 2)) {
-			return;
-		}
 
-		Item item = itemEntity.getItem().getItem();
-		boolean shouldRender = (Configuration.ALL_ITEMS.get()
-				|| (Configuration.ONLY_EQUIPMENT.get() && isEquipmentItem(item))
-				|| (Configuration.ONLY_RARE.get() && LootBeamRenderer.compatRarityCheck(itemEntity, false))
-				|| (isItemInRegistryList(Configuration.WHITELIST.get(), itemEntity.getItem().getItem())))
-				&& !isItemInRegistryList(Configuration.BLACKLIST.get(), itemEntity.getItem().getItem());
 
-		if (shouldRender && (!Configuration.REQUIRE_ON_GROUND.get() || itemEntity.onGround())) {
-			delayedRenders.add(stack -> {
-				stack.pushPose();
-				stack.translate(itemEntity.getX(), itemEntity.getY(), itemEntity.getZ());
-				LootBeamRenderer.renderLootBeam(stack, event.getMultiBufferSource(), event.getPartialTick(), itemEntity.level().getGameTime(), itemEntity);
-				stack.popPose();
-			});
-		}
-	}
 
-	public static boolean isEquipmentItem(Item item) {
-		return item instanceof TieredItem || item instanceof ArmorItem || item instanceof ShieldItem || item instanceof BowItem || item instanceof CrossbowItem;
-	}
-
-	private static boolean isItemInRegistryList(List<String> registryNames, Item item) {
-		if (registryNames.isEmpty()) {
-			return false;
-		}
-
-		for (String id : registryNames.stream().filter(s -> !s.isEmpty()).toList()) {
-			if (!id.contains(":") && ForgeRegistries.ITEMS.getKey(item).getNamespace().equals(id)) {
-				return true;
-			}
-
-			ResourceLocation itemResource = ResourceLocation.tryParse(id);
-			if (itemResource != null && ForgeRegistries.ITEMS.getValue(itemResource).asItem() == item.asItem()) {
-				return true;
-			}
-		}
-
-		return false;
-	}
 
 }
