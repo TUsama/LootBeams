@@ -9,11 +9,14 @@ import com.lootbeams.compat.ApotheosisCompat;
 import com.lootbeams.config.Config;
 import com.lootbeams.config.ConfigurationManager;
 import com.lootbeams.modules.beam.color.BeamColorCache;
+import com.lootbeams.modules.beam.color.BeamColorSourceContainer;
+import com.lootbeams.utils.Checker;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.datafixers.util.Either;
 import com.mojang.math.Axis;
+import lombok.val;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -51,35 +54,48 @@ public class BeamRenderer {
     private static final Random RANDOM = new Random();
 
 
-    public static void renderLootBeam(PoseStack stack, MultiBufferSource buffer, float pticks, long worldtime, ItemEntity item, Quaternionf quaternionf) {
+    public static void renderLootBeam(PoseStack stack, MultiBufferSource buffer, float pticks, long worldtime, Entity entity, Quaternionf quaternionf) {
+        if (!(entity instanceof ItemEntity itemEntity)
+                || Minecraft.getInstance().player.distanceToSqr(itemEntity) > Math.pow(Configuration.RENDER_DISTANCE.get(), 2)) {
+            return;
+        }
+        Item item = itemEntity.getItem().getItem();
+        boolean shouldRender = (Configuration.ALL_ITEMS.get()
+                || (Configuration.ONLY_EQUIPMENT.get() && Checker.isEquipmentItem(item))
+                || (Configuration.ONLY_RARE.get() && BeamRenderer.compatRarityCheck(itemEntity, false))
+                || (Checker.isItemInRegistryList(Configuration.WHITELIST.get(), itemEntity.getItem().getItem())))
+                && !Checker.isItemInRegistryList(Configuration.BLACKLIST.get(), itemEntity.getItem().getItem());
+
+        if (!(shouldRender && (!Configuration.REQUIRE_ON_GROUND.get() || itemEntity.onGround()))) return;
+
         RenderSystem.enableDepthTest();
 
 
         Double preBeamAlpha = ConfigurationManager.request(Config.BEAM_ALPHA);
 
-        float entityTime = item.tickCount;
-        double distance = Minecraft.getInstance().player.distanceToSqr(item);
-        float v = ((Double) ConfigurationManager.request(Config.BEAM_FADE_DISTANCE)).floatValue();
-        float fadeDistance = v * v;
+        float entityTime = itemEntity.tickCount;
+        double distance = Minecraft.getInstance().player.distanceTo(itemEntity);
+        float fadeDistance = ((Double) ConfigurationManager.request(Config.BEAM_FADE_DISTANCE)).floatValue();
         //Clefal: we don't actually need that much beamAlpha gimmick.
         //We should never cancel the beam, just make it hard to see.
         if (distance > fadeDistance) {
-            float fade = (float) (distance - fadeDistance);
-            preBeamAlpha *= Math.max(0.05f, 1 - fade);
+            float m = (float) distance - fadeDistance;
+
+            preBeamAlpha *= 1 / Math.max(m / fadeDistance, 1.0f);
         }
 
 
-        float beamRadius = 0.05f * ((Double) ConfigurationManager.request(Config.BEAM_RADIUS)).floatValue() + 0.5f;
+        float beamRadius = 0.05f * ((Double) ConfigurationManager.request(Config.BEAM_RADIUS)).floatValue();
         float glowRadius = beamRadius * 1.2f;
         float beamHeight = ((Double) ConfigurationManager.request(Config.BEAM_HEIGHT)).floatValue();
         float yOffset = ((Double) ConfigurationManager.request(Config.BEAM_Y_OFFSET)).floatValue();
         if (ConfigurationManager.request(Config.COMMON_SHORTER_BEAM)) {
-            if (!compatRarityCheck(item, false)) {
+            if (!compatRarityCheck(itemEntity, false)) {
                 beamHeight *= 0.65f;
                 yOffset -= yOffset;
             }
         }
-        Either<Boolean, Color> ask = BeamColorCache.ask(item);
+        Either<Boolean, Color> ask = BeamColorCache.ask(itemEntity);
         if (ask.right().isEmpty()) return;
 
         Color color = ask.right().get();
@@ -88,30 +104,27 @@ public class BeamRenderer {
         float B = color.getBlue() / 255f;
 
         //I will rewrite the beam rendering code soon! I promise!
-        var beamAlpha = preBeamAlpha.floatValue() + 0.5f;
+        var beamAlpha = preBeamAlpha.floatValue();
 
 
         stack.pushPose();
-        stack.mulPose(quaternionf);
-        //System.out.println(item.getPosition(pticks));
+        //stack.mulPose(quaternionf);
         //Render main beam
-        stack.pushPose();
         float rotation = (float) Math.floorMod(worldtime, 40L) + pticks;
-        /*stack.mulPose(Axis.YP.rotationDegrees(rotation * 2.25F - 45.0F));
+        stack.mulPose(Axis.YP.rotationDegrees(rotation * 2.25F - 45.0F));
         stack.translate(0, yOffset, 0);
-        stack.translate(0, 1, 0);*/
+        stack.translate(0, 1, 0);
         stack.mulPose(Axis.XP.rotationDegrees(180));
         VertexConsumer buffer1 = buffer.getBuffer(BeamRenderType.LOOT_BEAM_RENDERTYPE);
-
+        //System.out.println(beamAlpha);
         renderPart(stack, buffer1, R, G, B, beamAlpha, beamHeight, 0.0F, beamRadius, beamRadius, 0.0F, -beamRadius, 0.0F, 0.0F, -beamRadius, false);
         stack.mulPose(Axis.XP.rotationDegrees(-180));
 
         renderPart(stack, buffer1, R, G, B, beamAlpha, beamHeight, 0.0F, beamRadius, beamRadius, 0.0F, -beamRadius, 0.0F, 0.0F, -beamRadius, Configuration.SOLID_BEAM.get());
         stack.popPose();
-        stack.popPose();
         //Stopwatch started = Stopwatch.createStarted();
 
-/*
+
         //Render glow around main beam
         stack.pushPose();
         stack.translate(0, yOffset, 0);
@@ -136,7 +149,7 @@ public class BeamRenderer {
             stack.popPose();
         }
 
-        if (Configuration.GLOW_EFFECT.get() && item.onGround()) {
+        if (Configuration.GLOW_EFFECT.get() && itemEntity.onGround()) {
 
             stack.pushPose();
             stack.translate(0, 0.001f, 0);
@@ -157,18 +170,16 @@ public class BeamRenderer {
 
         if (Configuration.PARTICLES.get()) {
             if (!Configuration.PARTICLE_RARE_ONLY.get()) {
-                renderParticles(pticks, item, (int) entityTime, R, G, B);
+                renderParticles(pticks, itemEntity, (int) entityTime, R, G, B);
             } else {
-                boolean shouldRender = false;
-                shouldRender = compatRarityCheck(item, shouldRender);
-                if (shouldRender) {
-                    renderParticles(pticks, item, (int) entityTime, R, G, B);
+                boolean shouldRender1 = false;
+                shouldRender1 = compatRarityCheck(itemEntity, shouldRender1);
+                if (shouldRender1) {
+                    renderParticles(pticks, itemEntity, (int) entityTime, R, G, B);
                 }
             }
 
         }
-        buffer1.endVertex();*/
-
 
     }
 

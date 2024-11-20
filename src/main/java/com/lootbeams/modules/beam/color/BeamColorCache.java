@@ -13,10 +13,13 @@ public class BeamColorCache {
 
     public static Either<Boolean, Color> ask(ItemEntity entity){
         ItemStack item = entity.getItem();
+
         if (colorMap.containsKey(item)) {
+
             return Either.right(colorMap.get(item));
         }
         Color itemColor = BeamColorSourceContainer.getItemColor(entity);
+
         provide(entity, itemColor);
         return Either.right(itemColor);
     }

@@ -30,7 +30,7 @@ public class BeamColorSourceContainer {
 
     public static Color getItemColor(ItemEntity entity){
         for (IBeamColorSource<?> source : sources) {
-            System.out.println("current sources: " + source);
+
             Color color = source.getColor(entity);
             if (!IBeamColorSource.DEFAULT.equals(color)) {
                 return color;

@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 public enum LBBuildInColorSource implements IBeamColorSource<Item> {
@@ -44,6 +45,7 @@ public enum LBBuildInColorSource implements IBeamColorSource<Item> {
                     .ifPresent(x -> optionalColor.map(y -> x.right()));
 
         }
+        return optionalColor;
     }),
     NAME((itemEntity, optionalColor) -> {
         Boolean useNameColor = ConfigurationManager.request(Config.RENDER_NAME_COLOR);
@@ -61,30 +63,36 @@ public enum LBBuildInColorSource implements IBeamColorSource<Item> {
 
             }
         }
-
+        return optionalColor;
     }),
     RARITY((itemEntity, optionalColor) -> {
         boolean useRarity = ConfigurationManager.request(Config.RENDER_RARITY_COLOR);
         val color = itemEntity.getItem().getRarity().getStyleModifier().apply(Style.EMPTY).getColor();
         val hasColor = color != null;
+        System.out.println(useRarity);
+        System.out.println(hasColor);
         if (useRarity && hasColor) {
-            optionalColor.map(x -> new Color(color.getValue()));
+            return optionalColor.map(x -> new Color(color.getValue()));
         }
+        return optionalColor;
     });
 
-    final BiConsumer<ItemEntity, Optional<Color>> func;
+    final BiFunction<ItemEntity, Optional<Color>, Optional<Color>> func;
 
 
-    LBBuildInColorSource(BiConsumer<ItemEntity, Optional<Color>> func) {
+    LBBuildInColorSource(BiFunction<ItemEntity, Optional<Color>, Optional<Color>> func) {
         this.func = func;
     }
 
     @Override
     public Color getColor(ItemEntity item) {
         Optional<Color> defaultColor = Optional.of(DEFAULT);
-        func.accept(item, defaultColor);
-        return defaultColor.get();
+
+        return func.apply(item, defaultColor).orElse(DEFAULT);
     }
+
+
+
 
     private static class Container {
         static final List<String> list = Arrays.stream(Order.values())
