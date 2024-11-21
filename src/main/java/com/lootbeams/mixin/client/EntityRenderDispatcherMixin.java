@@ -1,5 +1,6 @@
 package com.lootbeams.mixin.client;
 
+import com.lootbeams.modules.beam.BeamModule;
 import com.lootbeams.modules.beam.BeamRenderer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -25,10 +26,9 @@ public abstract class EntityRenderDispatcherMixin {
     )
     )
     private void lootBeamHook(Entity entity, double worldX, double worldY, double worldZ, float entityYRot, float partialTicks, PoseStack poseStack, MultiBufferSource buffers, int light, CallbackInfo ci) {
-
-
-        BeamRenderer.renderLootBeam(poseStack, buffers, partialTicks, entity.level().getGameTime(), entity, cameraOrientation());
-
+        if (BeamModule.INSTANCE.isModuleEnable()){
+            BeamRenderer.renderLootBeam(poseStack, buffers, partialTicks, entity.level().getGameTime(), entity, cameraOrientation());
+        }
     }
 
 

@@ -5,6 +5,7 @@ import java.lang.reflect.Type;
 import java.util.List;
 
 public enum Config {
+
     ITEMS_GLOW(Boolean.class),
     ALL_ITEMS(Boolean.class),
     ONLY_EQUIPMENT(Boolean.class),
@@ -20,7 +21,7 @@ public enum Config {
 
 
 
-
+    ENABLE_BEAM(Boolean.class),
     RENDER_NAME_COLOR(Boolean.class),
     RENDER_RARITY_COLOR(Boolean.class),
     BEAM_RADIUS(Double.class),

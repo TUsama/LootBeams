@@ -19,6 +19,7 @@ public interface Attempt {
             runnable.run();
             return false;
         } catch (Exception e) {
+            runWhenFail.run();
             return true;
         }
     }

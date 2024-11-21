@@ -16,7 +16,7 @@ import java.util.List;
 public class Configuration implements IConfigurationProvider {
 
 	public static ForgeConfigSpec CLIENT_CONFIG;
-
+	public static ForgeConfigSpec.BooleanValue ENABLE_BEAM;
 	public static ForgeConfigSpec.BooleanValue ITEMS_GLOW;
 	public static ForgeConfigSpec.BooleanValue ALL_ITEMS;
 	public static ForgeConfigSpec.BooleanValue ONLY_EQUIPMENT;
@@ -96,6 +96,8 @@ public class Configuration implements IConfigurationProvider {
 		ForgeConfigSpec.Builder clientBuilder = new ForgeConfigSpec.Builder();
 
 		clientBuilder.comment("Beam Config").push("Loot Beams");
+		ENABLE_BEAM = clientBuilder.define("enable_beam", true);
+
 		RENDER_NAME_COLOR = clientBuilder.comment("If beams should be colored the same as the Items name (excludes name colors from rarity). This has priority over render_rarity_color.").define("render_name_color", true);
 
 
@@ -322,6 +324,7 @@ public class Configuration implements IConfigurationProvider {
 	}
 
 	public static void registerToManager() {
+		ConfigurationManager.insert(Config.ENABLE_BEAM, () -> ENABLE_BEAM.get());
 		ConfigurationManager.insert(Config.RENDER_NAME_COLOR, () -> RENDER_NAME_COLOR.get());
 		ConfigurationManager.insert(Config.RENDER_RARITY_COLOR, () -> RENDER_RARITY_COLOR.get());
 		ConfigurationManager.insert(Config.RENDER_DISTANCE, () -> RENDER_DISTANCE.get());

@@ -5,6 +5,7 @@ import com.lootbeams.LootBeams;
 import com.lootbeams.config.Config;
 import com.lootbeams.config.ConfigurationManager;
 import com.lootbeams.utils.Attempt;
+import com.lootbeams.utils.Provider;
 import com.mojang.datafixers.util.Either;
 import com.mojang.datafixers.util.Pair;
 import lombok.val;
@@ -50,18 +51,7 @@ public enum LBBuildInColorSource implements IBeamColorSource<Item> {
     NAME((itemEntity, optionalColor) -> {
         Boolean useNameColor = ConfigurationManager.request(Config.RENDER_NAME_COLOR);
         if (useNameColor) {
-            ItemStack item = itemEntity.getItem();
-            String string = item.getHoverName().getString();
-            boolean startWithMark = string.charAt(0) == '§';
-            if (startWithMark) {
-                ChatFormatting byCode = ChatFormatting.getByCode(string.charAt(1));
-                if (byCode != null) {
-                    if (byCode.isColor()) {
-                        optionalColor.map(x -> new Color(byCode.getColor()));
-                    }
-                }
-
-            }
+            return Optional.of(Provider.getRawColor(itemEntity.getItem().getHoverName()));
         }
         return optionalColor;
     }),

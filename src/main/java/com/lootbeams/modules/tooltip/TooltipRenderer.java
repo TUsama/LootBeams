@@ -2,6 +2,7 @@ package com.lootbeams.modules.tooltip;
 
 import com.lootbeams.Configuration;
 import com.lootbeams.modules.beam.BeamRenderer;
+import com.lootbeams.utils.Provider;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -71,7 +72,7 @@ public class TooltipRenderer {
                 //Render dmcloot rarity small tags
                 if (Configuration.DMCLOOT_COMPAT_RARITY.get() && ModList.get().isLoaded("dmcloot")) {
                     if (item.getItem().hasTag() && item.getItem().getTag().contains("dmcloot.rarity")) {
-                        Color rarityColor = Configuration.WHITE_RARITIES.get() ? Color.WHITE : BeamRenderer.getRawColor(tooltipRarity);
+                        Color rarityColor = Configuration.WHITE_RARITIES.get() ? Color.WHITE : Provider.getRawColor(tooltipRarity);
                         net.minecraft.network.chat.Component translatedRarity = Component.translatable("rarity.dmcloot." + item.getItem().getTag().getString("dmcloot.rarity"));
                         renderText(fontrenderer, stack, buffer, translatedRarity.getString(), rarityColor.getRGB(), backgroundColor, backgroundAlpha);
                         textDrawn = true;
@@ -80,7 +81,7 @@ public class TooltipRenderer {
 
                 //Render custom rarities
                 if (!textDrawn && Configuration.CUSTOM_RARITIES.get().contains(tooltipRarity.getString())) {
-                    Color rarityColor = Configuration.WHITE_RARITIES.get() ? Color.WHITE : BeamRenderer.getRawColor(tooltipRarity);
+                    Color rarityColor = Configuration.WHITE_RARITIES.get() ? Color.WHITE : Provider.getRawColor(tooltipRarity);
                     foregroundColor = new Color(rarityColor.getRed(), rarityColor.getGreen(), rarityColor.getBlue(), (int) (255 * foregroundAlpha)).getRGB();
                     backgroundColor = new Color(rarityColor.getRed(), rarityColor.getGreen(), rarityColor.getBlue(), (int) (255 * backgroundAlpha)).getRGB();
                     renderText(fontrenderer, stack, buffer, tooltipRarity.getString(), foregroundColor, backgroundColor, backgroundAlpha);
@@ -88,10 +89,10 @@ public class TooltipRenderer {
 
             }
             if (!textDrawn && Configuration.VANILLA_RARITIES.get()) {
-                Color rarityColor = BeamRenderer.getRawColor(tooltip.get(0));
+                Color rarityColor = Provider.getRawColor(tooltip.get(0));
                 foregroundColor = new Color(rarityColor.getRed(), rarityColor.getGreen(), rarityColor.getBlue(), (int) (255 * foregroundAlpha)).getRGB();
                 backgroundColor = new Color(rarityColor.getRed(), rarityColor.getGreen(), rarityColor.getBlue(), (int) (255 * backgroundAlpha)).getRGB();
-                renderText(fontrenderer, stack, buffer, BeamRenderer.getRarity(item.getItem()), foregroundColor, backgroundColor, backgroundAlpha);
+                renderText(fontrenderer, stack, buffer, Provider.getRarity(item.getItem()), foregroundColor, backgroundColor, backgroundAlpha);
             }
 
             stack.popPose();

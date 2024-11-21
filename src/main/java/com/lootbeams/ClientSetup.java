@@ -4,6 +4,7 @@ import com.lootbeams.compat.ApotheosisCompat;
 import com.lootbeams.modules.beam.BeamRenderer;
 import com.lootbeams.modules.tooltip.TooltipRenderer;
 import com.lootbeams.utils.Checker;
+import com.lootbeams.utils.Provider;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
@@ -13,19 +14,13 @@ import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.sounds.WeighedSoundEvents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.BowItem;
-import net.minecraft.world.item.CrossbowItem;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ShieldItem;
-import net.minecraft.world.item.TieredItem;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
@@ -34,7 +29,6 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderGuiOverlayEvent;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
-import net.minecraftforge.client.event.RenderNameTagEvent;
 import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
@@ -44,7 +38,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
@@ -98,7 +91,7 @@ public class ClientSetup {
 											.orElse(Screen.getTooltipFromItem(Minecraft.getInstance(), itemEntity.getItem()).get(0));
 							if(Configuration.SCREEN_TOOLTIPS_REQUIRE_CROUCH.get() && !player.isCrouching()) longestLine = tooltipLines.get(0);
 							x = (int)desiredScreenSpacePos.x() - 10 - Minecraft.getInstance().font.width(longestLine) / 2;
-							rarityX = (int)desiredScreenSpacePos.x() - 12 - Minecraft.getInstance().font.width(BeamRenderer.getRarity(itemEntity.getItem())) / 2;
+							rarityX = (int)desiredScreenSpacePos.x() - 12 - Minecraft.getInstance().font.width(Provider.getRarity(itemEntity.getItem())) / 2;
 							y = (int)desiredScreenSpacePos.y();
 						}
 						int guiScale = Minecraft.getInstance().options.guiScale().get();
@@ -108,10 +101,10 @@ public class ClientSetup {
 						if((Configuration.SCREEN_TOOLTIPS_REQUIRE_CROUCH.get() && player.isCrouching()) || !Configuration.SCREEN_TOOLTIPS_REQUIRE_CROUCH.get()) {
 							event.getGuiGraphics().renderTooltip(Minecraft.getInstance().font, itemEntity.getItem(), x, y);
 						} else {
-							tooltipLines = List.of(tooltipLines.get(0), Component.literal(BeamRenderer.getRarity(itemEntity.getItem())).withStyle(itemEntity.getItem().getDisplayName().getStyle()));
+							tooltipLines = List.of(tooltipLines.get(0), Component.literal(Provider.getRarity(itemEntity.getItem())).withStyle(itemEntity.getItem().getDisplayName().getStyle()));
 							if(ModList.get().isLoaded("apotheosis")) {
 								if(ApotheosisCompat.isApotheosisItem(itemEntity.getItem())) {
-									tooltipLines = List.of(tooltipLines.get(0), Component.literal(BeamRenderer.getRarity(itemEntity.getItem())).withStyle(s -> s.withColor(ApotheosisCompat.getRarityColor(itemEntity.getItem()))));
+									tooltipLines = List.of(tooltipLines.get(0), Component.literal(Provider.getRarity(itemEntity.getItem())).withStyle(s -> s.withColor(ApotheosisCompat.getRarityColor(itemEntity.getItem()))));
 								}
 							}
 							if(Configuration.COMBINE_NAME_AND_RARITY.get()) {
