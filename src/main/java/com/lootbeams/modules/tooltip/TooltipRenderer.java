@@ -1,17 +1,19 @@
 package com.lootbeams.modules.tooltip;
 
 import com.lootbeams.Configuration;
-import com.lootbeams.modules.beam.BeamRenderer;
 import com.lootbeams.utils.Provider;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.StringUtil;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.fml.ModList;
 
 import java.awt.*;
@@ -25,7 +27,7 @@ public class TooltipRenderer {
     public static void renderNameTag(PoseStack stack, MultiBufferSource buffer, ItemEntity item, Color color) {
         if (Configuration.ADVANCED_TOOLTIPS.get()) return;
         //If player is crouching or looking at the item
-        if (Minecraft.getInstance().player.isCrouching() || (Configuration.RENDER_NAMETAGS_ONLOOK.get() && BeamRenderer.isLookingAt(Minecraft.getInstance().player, item, Configuration.NAMETAG_LOOK_SENSITIVITY.get()))) {
+        if (Minecraft.getInstance().player.isCrouching() || (Configuration.RENDER_NAMETAGS_ONLOOK.get() && isLookingAt(Minecraft.getInstance().player, item, Configuration.NAMETAG_LOOK_SENSITIVITY.get()))) {
             float foregroundAlpha = Configuration.NAMETAG_TEXT_ALPHA.get().floatValue();
             float backgroundAlpha = Configuration.NAMETAG_BACKGROUND_ALPHA.get().floatValue();
             double yOffset = Configuration.NAMETAG_Y_OFFSET.get();
@@ -108,5 +110,16 @@ public class TooltipRenderer {
         } else {
             fontRenderer.drawInBatch(text, (float) (-fontRenderer.width(text) / 2), 0f, foregroundColor, false, stack.last().pose(), buffer, Font.DisplayMode.NORMAL, backgroundColor, 15728864);
         }
+    }
+
+    /**
+     * Checks if the player is looking at the given entity, accuracy determines how close the player has to look.
+     */
+    public static boolean isLookingAt(LocalPlayer player, Entity target, double accuracy) {
+        Vec3 difference = new Vec3(target.getX() - player.getX(), target.getEyeY() - player.getEyeY(), target.getZ() - player.getZ());
+        double length = difference.length();
+//        double dot = player.getViewVector(1.0F).normalize().dot(difference.normalize());
+        double dot = Minecraft.getInstance().getCameraEntity().getLookAngle().normalize().dot(difference.normalize());
+        return dot > 1.0D - accuracy / length && !target.isInvisible();
     }
 }

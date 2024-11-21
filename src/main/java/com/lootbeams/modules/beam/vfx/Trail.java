@@ -1,4 +1,4 @@
-package com.lootbeams.vfx;
+package com.lootbeams.modules.beam.vfx;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;

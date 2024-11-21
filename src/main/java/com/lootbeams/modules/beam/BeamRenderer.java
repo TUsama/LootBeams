@@ -2,7 +2,7 @@ package com.lootbeams.modules.beam;
 
 import com.lootbeams.Configuration;
 import com.lootbeams.ModClientEvents;
-import com.lootbeams.VFXParticle;
+import com.lootbeams.modules.beam.vfx.VFXParticle;
 import com.lootbeams.compat.ApotheosisCompat;
 import com.lootbeams.config.Config;
 import com.lootbeams.config.ConfigurationManager;
@@ -12,11 +12,9 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.datafixers.util.Either;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
@@ -140,7 +138,7 @@ public class BeamRenderer {
                 renderGlow(stack, buffer.getBuffer(BeamRenderType.GLOW), R, G, B, beamAlpha * 0.4f, radius);
                 stack.popPose();
             }
-
+            /*
             if (Configuration.PARTICLES.get()) {
                 if (!Configuration.PARTICLE_RARE_ONLY.get()) {
                     renderParticles(pticks, itemEntity, (int) entityTime, R, G, B);
@@ -152,7 +150,7 @@ public class BeamRenderer {
                     }
                 }
 
-            }
+            }*/
         }
 
         /*
@@ -203,10 +201,6 @@ public class BeamRenderer {
         }
     }
 
-    private static double pulse(float entityTime, float max) {
-        double val = Math.cos(entityTime / 10f) * 0.5f + 0.5f;
-        return Mth.lerp(val, 0.25f, max);
-    }
 
     private static void addParticle(ResourceLocation spriteLocation, float red, float green, float blue, float alpha, int lifetime, float size, Vec3 pos, Vec3 motion, Vec3 sourcePos) {
         Minecraft mc = Minecraft.getInstance();
@@ -226,27 +220,6 @@ public class BeamRenderer {
         builder.vertex(matrixpose, -radius, (float) 0, radius).color(red, green, blue, alpha).uv(0, 1).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(15728880).normal(matrixnormal, 0.0F, 1.0F, 0.0F).endVertex();
         builder.vertex(matrixpose, radius, (float) 0, radius).color(red, green, blue, alpha).uv(1, 1).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(15728880).normal(matrixnormal, 0.0F, 1.0F, 0.0F).endVertex();
         builder.vertex(matrixpose, radius, (float) 0, -radius).color(red, green, blue, alpha).uv(1, 0).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(15728880).normal(matrixnormal, 0.0F, 1.0F, 0.0F).endVertex();
-    }
-
-
-    public static String capitalize(String str) {
-        if (str == null || str.isEmpty()) {
-            return "";
-        }
-
-        return str.substring(0, 1).toUpperCase() + str.substring(1);
-    }
-
-
-    /**
-     * Checks if the player is looking at the given entity, accuracy determines how close the player has to look.
-     */
-    public static boolean isLookingAt(LocalPlayer player, Entity target, double accuracy) {
-        Vec3 difference = new Vec3(target.getX() - player.getX(), target.getEyeY() - player.getEyeY(), target.getZ() - player.getZ());
-        double length = difference.length();
-//        double dot = player.getViewVector(1.0F).normalize().dot(difference.normalize());
-        double dot = Minecraft.getInstance().getCameraEntity().getLookAngle().normalize().dot(difference.normalize());
-        return dot > 1.0D - accuracy / length && !target.isInvisible();
     }
 
 

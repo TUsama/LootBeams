@@ -1,6 +1,9 @@
-package com.lootbeams;
+package com.lootbeams.modules.beam.vfx;
 
-import com.lootbeams.vfx.Trail;
+import com.lootbeams.ClientSetup;
+import com.lootbeams.Configuration;
+import com.lootbeams.LootBeams;
+import com.lootbeams.LootBeamsParticleRenderType;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
