@@ -7,6 +7,7 @@ import com.lootbeams.compat.ApotheosisCompat;
 import com.lootbeams.config.Config;
 import com.lootbeams.config.ConfigurationManager;
 import com.lootbeams.modules.beam.color.BeamColorCache;
+import com.lootbeams.modules.tooltip.TooltipRenderer;
 import com.lootbeams.utils.Checker;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -138,6 +139,8 @@ public class BeamRenderer {
                 renderGlow(stack, buffer.getBuffer(BeamRenderType.GLOW), R, G, B, beamAlpha * 0.4f, radius);
                 stack.popPose();
             }
+
+            TooltipRenderer.renderNameTag(stack, buffer, itemEntity, Color.BLACK);
             /*
             if (Configuration.PARTICLES.get()) {
                 if (!Configuration.PARTICLE_RARE_ONLY.get()) {

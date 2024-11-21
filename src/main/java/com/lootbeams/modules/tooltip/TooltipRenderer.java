@@ -1,6 +1,8 @@
 package com.lootbeams.modules.tooltip;
 
 import com.lootbeams.Configuration;
+import com.lootbeams.config.Config;
+import com.lootbeams.config.ConfigurationManager;
 import com.lootbeams.utils.Provider;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
@@ -25,7 +27,13 @@ public class TooltipRenderer {
     public static final Map<ItemEntity, List<Component>> TOOLTIP_CACHE = new ConcurrentHashMap<>();
 
     public static void renderNameTag(PoseStack stack, MultiBufferSource buffer, ItemEntity item, Color color) {
-        if (Configuration.ADVANCED_TOOLTIPS.get()) return;
+        if (ConfigurationManager.request(Config.ADVANCED_TOOLTIPS)) return;
+/*
+        if (Minecraft.getInstance().player.isCrouching() || ((((Boolean) ConfigurationManager.request(Config.RENDER_NAMETAGS_ONLOOK)) && isLookingAt(Minecraft.getInstance().player, item, Configuration.NAMETAG_LOOK_SENSITIVITY.get())))){
+
+        }*/
+
+/*
         //If player is crouching or looking at the item
         if (Minecraft.getInstance().player.isCrouching() || (Configuration.RENDER_NAMETAGS_ONLOOK.get() && isLookingAt(Minecraft.getInstance().player, item, Configuration.NAMETAG_LOOK_SENSITIVITY.get()))) {
             float foregroundAlpha = Configuration.NAMETAG_TEXT_ALPHA.get().floatValue();
@@ -99,6 +107,8 @@ public class TooltipRenderer {
 
             stack.popPose();
         }
+        */
+
     }
 
     private static void renderText(Font fontRenderer, PoseStack stack, MultiBufferSource buffer, String text, int foregroundColor, int backgroundColor, float backgroundAlpha) {

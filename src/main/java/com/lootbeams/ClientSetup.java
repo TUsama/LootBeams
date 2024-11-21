@@ -66,6 +66,10 @@ public class ClientSetup {
 	}
 	@SubscribeEvent
 	public static void onHudRender(RenderGuiOverlayEvent.Post event) {
+		if (true){
+			return;
+		}
+
 		if(event.getOverlay().equals(VanillaGuiOverlay.CROSSHAIR.type())){
 			if(Configuration.ADVANCED_TOOLTIPS.get() && (Minecraft.getInstance().screen == null || Minecraft.getInstance().screen instanceof ChatScreen)) {
 				Player player = Minecraft.getInstance().player;
