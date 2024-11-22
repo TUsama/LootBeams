@@ -17,6 +17,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.fml.ModList;
+import org.joml.Quaternionf;
 
 import java.awt.*;
 import java.util.List;
@@ -26,88 +27,109 @@ import java.util.concurrent.ConcurrentHashMap;
 public class TooltipRenderer {
     public static final Map<ItemEntity, List<Component>> TOOLTIP_CACHE = new ConcurrentHashMap<>();
 
-    public static void renderNameTag(PoseStack stack, MultiBufferSource buffer, ItemEntity item, Color color) {
-        if (ConfigurationManager.request(Config.ADVANCED_TOOLTIPS)) return;
-
-        if (Minecraft.getInstance().player.isCrouching() || ((((Boolean) ConfigurationManager.request(Config.RENDER_NAMETAGS_ONLOOK)) && isLookingAt(Minecraft.getInstance().player, item, Configuration.NAMETAG_LOOK_SENSITIVITY.get())))){
-
-        }
-
+    public static void renderNameTag(PoseStack stack, MultiBufferSource buffer, ItemEntity item, Color color, Quaternionf camera) {
+        if (Minecraft.getInstance().player.isCrouching() || ((((Boolean) ConfigurationManager.request(Config.RENDER_NAMETAGS_ONLOOK)) && isLookingAt(Minecraft.getInstance().player, item, Configuration.NAMETAG_LOOK_SENSITIVITY.get())))) {
 /*
-        //If player is crouching or looking at the item
-        if (Minecraft.getInstance().player.isCrouching() || (Configuration.RENDER_NAMETAGS_ONLOOK.get() && isLookingAt(Minecraft.getInstance().player, item, Configuration.NAMETAG_LOOK_SENSITIVITY.get()))) {
-            float foregroundAlpha = Configuration.NAMETAG_TEXT_ALPHA.get().floatValue();
-            float backgroundAlpha = Configuration.NAMETAG_BACKGROUND_ALPHA.get().floatValue();
-            double yOffset = Configuration.NAMETAG_Y_OFFSET.get();
-            int foregroundColor = new Color(color.getRed(), color.getGreen(), color.getBlue(), (int) (255 * foregroundAlpha)).getRGB();
-            int backgroundColor = new Color(color.getRed(), color.getGreen(), color.getBlue(), (int) (255 * backgroundAlpha)).getRGB();
+            {
+                stack.pushPose();
+                stack.mulPose(camera);
+                {
+                    //Render nametags at heights based on player distance
+                    VertexConsumer buffer1 = buffer.getBuffer(TooltipRenderType.TOOLTIPS_BACKGROUND);
+                    float nametagScale = ((Double) ConfigurationManager.request(Config.NAMETAG_SCALE)).floatValue();
+                    stack.scale(-0.02F * nametagScale, -0.02F * nametagScale, 0.02F * nametagScale);
 
-            stack.pushPose();
+                    //Render stack counts on nametag
+                    Font fontrenderer = Minecraft.getInstance().font;
+                    String itemName = StringUtil.stripColor(item.getItem().getHoverName().getString());
+                    if (Configuration.RENDER_STACKCOUNT.get()) {
+                        int count = item.getItem().getCount();
+                        if (count > 1) {
+                            itemName = itemName + " x" + count;
+                        }
+                    }
 
-            //Render nametags at heights based on player distance
-            stack.translate(0.0D, Math.min(1D, Minecraft.getInstance().player.distanceToSqr(item) * 0.025D) + yOffset, 0.0D);
-            stack.mulPose(Minecraft.getInstance().getEntityRenderDispatcher().cameraOrientation());
-
-            float nametagScale = Configuration.NAMETAG_SCALE.get().floatValue();
-            stack.scale(-0.02F * nametagScale, -0.02F * nametagScale, 0.02F * nametagScale);
-
-            //Render stack counts on nametag
-            Font fontrenderer = Minecraft.getInstance().font;
-            String itemName = StringUtil.stripColor(item.getItem().getHoverName().getString());
-            if (Configuration.RENDER_STACKCOUNT.get()) {
-                int count = item.getItem().getCount();
-                if (count > 1) {
-                    itemName = itemName + " x" + count;
                 }
-            }
 
-            //Move closer to the player so we dont render in beam, and render the tag
-            stack.translate(0, 0, -10);
-            renderText(fontrenderer, stack, buffer, itemName, foregroundColor, backgroundColor, backgroundAlpha);
 
-            //Render small tags
-            stack.translate(0.0D, 10, 0.0D);
-            stack.scale(0.75f, 0.75f, 0.75f);
-            boolean textDrawn = false;
-            List<net.minecraft.network.chat.Component> tooltip;
-            if (!TOOLTIP_CACHE.containsKey(item)) {
-                tooltip = item.getItem().getTooltipLines(null, TooltipFlag.Default.NORMAL);
-                TOOLTIP_CACHE.put(item, tooltip);
-            } else {
-                tooltip = TOOLTIP_CACHE.get(item);
-            }
-            if (tooltip.size() >= 2) {
-                net.minecraft.network.chat.Component tooltipRarity = tooltip.get(1);
+                stack.popPose();
+            }*/
 
-                //Render dmcloot rarity small tags
-                if (Configuration.DMCLOOT_COMPAT_RARITY.get() && ModList.get().isLoaded("dmcloot")) {
-                    if (item.getItem().hasTag() && item.getItem().getTag().contains("dmcloot.rarity")) {
-                        Color rarityColor = Configuration.WHITE_RARITIES.get() ? Color.WHITE : Provider.getRawColor(tooltipRarity);
-                        net.minecraft.network.chat.Component translatedRarity = Component.translatable("rarity.dmcloot." + item.getItem().getTag().getString("dmcloot.rarity"));
-                        renderText(fontrenderer, stack, buffer, translatedRarity.getString(), rarityColor.getRGB(), backgroundColor, backgroundAlpha);
-                        textDrawn = true;
+
+            //If player is crouching or looking at the item
+            if (Minecraft.getInstance().player.isCrouching() || (Configuration.RENDER_NAMETAGS_ONLOOK.get() && isLookingAt(Minecraft.getInstance().player, item, Configuration.NAMETAG_LOOK_SENSITIVITY.get()))) {
+                float foregroundAlpha = Configuration.NAMETAG_TEXT_ALPHA.get().floatValue();
+                float backgroundAlpha = Configuration.NAMETAG_BACKGROUND_ALPHA.get().floatValue();
+                double yOffset = Configuration.NAMETAG_Y_OFFSET.get();
+                int foregroundColor = new Color(color.getRed(), color.getGreen(), color.getBlue(), (int) (255 * foregroundAlpha)).getRGB();
+                int backgroundColor = new Color(color.getRed(), color.getGreen(), color.getBlue(), (int) (255 * backgroundAlpha)).getRGB();
+
+                stack.pushPose();
+
+                //Render nametags at heights based on player distance
+                stack.translate(0.0D, Math.min(1D, Minecraft.getInstance().player.distanceToSqr(item) * 0.025D) + yOffset, 0.0D);
+                stack.mulPose(Minecraft.getInstance().getEntityRenderDispatcher().cameraOrientation());
+
+                float nametagScale = Configuration.NAMETAG_SCALE.get().floatValue();
+                stack.scale(-0.02F * nametagScale, -0.02F * nametagScale, 0.02F * nametagScale);
+
+                //Render stack counts on nametag
+                Font fontrenderer = Minecraft.getInstance().font;
+                String itemName = StringUtil.stripColor(item.getItem().getHoverName().getString());
+                if (Configuration.RENDER_STACKCOUNT.get()) {
+                    int count = item.getItem().getCount();
+                    if (count > 1) {
+                        itemName = itemName + " x" + count;
                     }
                 }
 
-                //Render custom rarities
-                if (!textDrawn && Configuration.CUSTOM_RARITIES.get().contains(tooltipRarity.getString())) {
-                    Color rarityColor = Configuration.WHITE_RARITIES.get() ? Color.WHITE : Provider.getRawColor(tooltipRarity);
+                //Move closer to the player so we dont render in beam, and render the tag
+                stack.translate(0, 0, -10);
+                renderText(fontrenderer, stack, buffer, itemName, foregroundColor, backgroundColor, backgroundAlpha);
+
+                //Render small tags
+                stack.translate(0.0D, 10, 0.0D);
+                stack.scale(0.75f, 0.75f, 0.75f);
+                boolean textDrawn = false;
+                List<net.minecraft.network.chat.Component> tooltip;
+                if (!TOOLTIP_CACHE.containsKey(item)) {
+                    tooltip = item.getItem().getTooltipLines(null, TooltipFlag.Default.NORMAL);
+                    TOOLTIP_CACHE.put(item, tooltip);
+                } else {
+                    tooltip = TOOLTIP_CACHE.get(item);
+                }
+                if (tooltip.size() >= 2) {
+                    net.minecraft.network.chat.Component tooltipRarity = tooltip.get(1);
+
+                    //Render dmcloot rarity small tags
+                    if (Configuration.DMCLOOT_COMPAT_RARITY.get() && ModList.get().isLoaded("dmcloot")) {
+                        if (item.getItem().hasTag() && item.getItem().getTag().contains("dmcloot.rarity")) {
+                            Color rarityColor = Configuration.WHITE_RARITIES.get() ? Color.WHITE : Provider.getRawColor(tooltipRarity);
+                            net.minecraft.network.chat.Component translatedRarity = Component.translatable("rarity.dmcloot." + item.getItem().getTag().getString("dmcloot.rarity"));
+                            renderText(fontrenderer, stack, buffer, translatedRarity.getString(), rarityColor.getRGB(), backgroundColor, backgroundAlpha);
+                            textDrawn = true;
+                        }
+                    }
+
+                    //Render custom rarities
+                    if (!textDrawn && Configuration.CUSTOM_RARITIES.get().contains(tooltipRarity.getString())) {
+                        Color rarityColor = Configuration.WHITE_RARITIES.get() ? Color.WHITE : Provider.getRawColor(tooltipRarity);
+                        foregroundColor = new Color(rarityColor.getRed(), rarityColor.getGreen(), rarityColor.getBlue(), (int) (255 * foregroundAlpha)).getRGB();
+                        backgroundColor = new Color(rarityColor.getRed(), rarityColor.getGreen(), rarityColor.getBlue(), (int) (255 * backgroundAlpha)).getRGB();
+                        renderText(fontrenderer, stack, buffer, tooltipRarity.getString(), foregroundColor, backgroundColor, backgroundAlpha);
+                    }
+
+                }
+                if (!textDrawn && Configuration.VANILLA_RARITIES.get()) {
+                    Color rarityColor = Provider.getRawColor(tooltip.get(0));
                     foregroundColor = new Color(rarityColor.getRed(), rarityColor.getGreen(), rarityColor.getBlue(), (int) (255 * foregroundAlpha)).getRGB();
                     backgroundColor = new Color(rarityColor.getRed(), rarityColor.getGreen(), rarityColor.getBlue(), (int) (255 * backgroundAlpha)).getRGB();
-                    renderText(fontrenderer, stack, buffer, tooltipRarity.getString(), foregroundColor, backgroundColor, backgroundAlpha);
+                    renderText(fontrenderer, stack, buffer, Provider.getRarity(item.getItem()), foregroundColor, backgroundColor, backgroundAlpha);
                 }
 
+                stack.popPose();
             }
-            if (!textDrawn && Configuration.VANILLA_RARITIES.get()) {
-                Color rarityColor = Provider.getRawColor(tooltip.get(0));
-                foregroundColor = new Color(rarityColor.getRed(), rarityColor.getGreen(), rarityColor.getBlue(), (int) (255 * foregroundAlpha)).getRGB();
-                backgroundColor = new Color(rarityColor.getRed(), rarityColor.getGreen(), rarityColor.getBlue(), (int) (255 * backgroundAlpha)).getRGB();
-                renderText(fontrenderer, stack, buffer, Provider.getRarity(item.getItem()), foregroundColor, backgroundColor, backgroundAlpha);
-            }
-
-            stack.popPose();
         }
-        */
 
     }
 

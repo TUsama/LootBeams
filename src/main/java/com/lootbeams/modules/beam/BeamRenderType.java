@@ -7,6 +7,7 @@ import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
+import org.lwjgl.opengl.GL11;
 
 public class BeamRenderType {
 
@@ -23,6 +24,7 @@ public class BeamRenderType {
                 .setShaderState(RenderStateShard.RENDERTYPE_BEACON_BEAM_SHADER)
                 .setTextureState(new RenderStateShard.TextureStateShard(texture, false, false))
                 .setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY)
+                .setDepthTestState(new RenderStateShard.DepthTestStateShard("lb_always", GL11.GL_ALWAYS))
                 .setWriteMaskState(RenderStateShard.COLOR_WRITE)
                 .createCompositeState(false);
 

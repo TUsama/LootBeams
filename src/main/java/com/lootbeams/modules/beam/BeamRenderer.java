@@ -2,12 +2,11 @@ package com.lootbeams.modules.beam;
 
 import com.lootbeams.Configuration;
 import com.lootbeams.ModClientEvents;
-import com.lootbeams.modules.beam.vfx.VFXParticle;
 import com.lootbeams.compat.ApotheosisCompat;
 import com.lootbeams.config.Config;
 import com.lootbeams.config.ConfigurationManager;
 import com.lootbeams.modules.beam.color.BeamColorCache;
-import com.lootbeams.modules.tooltip.TooltipRenderer;
+import com.lootbeams.modules.beam.vfx.VFXParticle;
 import com.lootbeams.utils.Checker;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -16,7 +15,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
@@ -36,19 +34,10 @@ public class BeamRenderer {
     private static final Random RANDOM = new Random();
 
 
-    public static void renderLootBeam(PoseStack stack, MultiBufferSource buffer, float pticks, long worldtime, Entity entity, Quaternionf quaternionf) {
-        if (!(entity instanceof ItemEntity itemEntity)
-                || Minecraft.getInstance().player.distanceToSqr(itemEntity) > Math.pow(Configuration.RENDER_DISTANCE.get(), 2)) {
-            return;
-        }
-        Item item = itemEntity.getItem().getItem();
-        boolean shouldRender = (Configuration.ALL_ITEMS.get()
-                || (Configuration.ONLY_EQUIPMENT.get() && Checker.isEquipmentItem(item))
-                || (Configuration.ONLY_RARE.get() && BeamRenderer.compatRarityCheck(itemEntity, false))
-                || (Checker.isItemInRegistryList(Configuration.WHITELIST.get(), itemEntity.getItem().getItem())))
-                && !Checker.isItemInRegistryList(Configuration.BLACKLIST.get(), itemEntity.getItem().getItem());
+    public static void renderLootBeam(PoseStack stack, MultiBufferSource buffer, float pticks, long worldtime, ItemEntity itemEntity, Quaternionf quaternionf) {
 
-        if (!(shouldRender && (!Configuration.REQUIRE_ON_GROUND.get() || itemEntity.onGround()))) return;
+        Item item = itemEntity.getItem().getItem();
+
 
 
         Either<Boolean, Color> ask = BeamColorCache.ask(itemEntity);
@@ -140,7 +129,7 @@ public class BeamRenderer {
                 stack.popPose();
             }
 
-            TooltipRenderer.renderNameTag(stack, buffer, itemEntity, Color.BLACK);
+            //TooltipRenderer.renderNameTag(stack, buffer, itemEntity, Color.BLACK);
             /*
             if (Configuration.PARTICLES.get()) {
                 if (!Configuration.PARTICLE_RARE_ONLY.get()) {
