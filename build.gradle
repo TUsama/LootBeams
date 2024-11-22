@@ -2,6 +2,7 @@ plugins {
     id 'net.minecraftforge.gradle' version '[6.0,6.2)'
     id 'org.spongepowered.mixin' version '0.7.+'
     id 'org.parchmentmc.librarian.forgegradle' version '1.+'
+    id 'com.github.johnrengelman.shadow' version '7.1.1'
 }
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
@@ -9,33 +10,17 @@ apply plugin: 'maven-publish'
 apply plugin: 'org.spongepowered.mixin'
 
 group = 'com.lootbeams'
-version = '1.20.1-1.2.6'
+version = '${minecraft_version}' + '-' + '${mod_version}'
 
 java {
-    archivesBaseName = 'lootbeams'
+    archivesBaseName = '${mod_name}'
     toolchain.languageVersion = JavaLanguageVersion.of(17)
 }
 
 minecraft {
-    // The mappings can be changed at any time and must be in the following format.
-    // Channel:   Version:
-    // official   MCVersion             Official field/method names from Mojang mapping files
-    // parchment  YYYY.MM.DD-MCVersion  Open community-sourced parameter names and javadocs layered on top of official
-    //
-    // You must be aware of the Mojang license when using the 'official' or 'parchment' mappings.
-    // See more information here: https://github.com/MinecraftForge/MCPConfig/blob/master/Mojang.md
-    //
-    // Parchment is an unofficial project maintained by ParchmentMC, separate from MinecraftForge
-    // Additional setup is needed to use their mappings: https://github.com/ParchmentMC/Parchment/wiki/Getting-Started
-    //
-    // Use non-default mappings at your own risk. They may not always work.
-    // Simply re-run your setup task after changing the mappings to update your workspace.
+    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
     mappings channel: 'parchment', version: '2023.09.03-1.20.1'
 
-     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
-
-    // Default run configurations.
-    // These can be tweaked, removed, or duplicated as needed.
     runs {
         client {
             workingDirectory project.file('run')
@@ -135,6 +120,10 @@ repositories {
         }
     }
 }
+configurations {
+    shade
+    implementation.extendsFrom shade
+}
 
 dependencies {
 
@@ -151,6 +140,12 @@ dependencies {
     compileOnly fg.deobf("curse.maven:apotheosis-313970:5486368")
     compileOnly fg.deobf("curse.maven:placebo-283644:5414631")
     compileOnly fg.deobf("curse.maven:apothic-attributes-898963:5340012")
+    shade ("net.neoforged:bus:${neoforge_eventbus_version}") {
+        exclude group: "org.ow2.asm"
+        exclude group: "org.apache.logging.log4j"
+        exclude group: "cpw.mods", module: "modlauncher"
+    }
+
 
 }
 mixin{
@@ -161,6 +156,7 @@ mixin{
 }
 // Example for how to get properties into the manifest for reading at runtime.
 jar {
+    archiveClassifier = 'slim'
     manifest {
         attributes([
                 "Specification-Title"     : "lootbeams",
@@ -179,3 +175,19 @@ jar.finalizedBy('reobfJar')
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
 }
+
+
+shadowJar {
+    archiveClassifier = ''
+    configurations = [project.configurations.shade]
+    relocate 'net.neoforged:bus:${neoforge_eventbus_version}', "${project.group}.relocated.net.neoforged:bus:${neoforge_eventbus_version}"
+    finalizedBy 'reobfShadowJar'
+}
+
+assemble.dependsOn shadowJar
+
+reobf {
+    shadowJar {}
+}
+
+

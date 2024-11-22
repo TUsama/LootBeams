@@ -1,7 +1,8 @@
 package com.lootbeams.events;
 
-import net.minecraftforge.eventbus.BusBuilderImpl;
-import net.minecraftforge.eventbus.EventBus;
+
+import net.neoforged.bus.BusBuilderImpl;
+import net.neoforged.bus.EventBus;
 
 public class LBEventBus extends EventBus {
 

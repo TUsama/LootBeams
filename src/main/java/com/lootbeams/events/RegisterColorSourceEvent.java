@@ -1,12 +1,12 @@
 package com.lootbeams.events;
 
 import com.lootbeams.modules.beam.color.IBeamColorSource;
-import net.minecraftforge.eventbus.api.Event;
+import net.neoforged.bus.api.Event;
 
 import java.util.List;
 import java.util.function.Consumer;
 
-public class RegisterColorSourceEvent extends Event {
+public abstract class RegisterColorSourceEvent extends Event {
     protected final List<IBeamColorSource<?>> gather;
 
     public RegisterColorSourceEvent(List<IBeamColorSource<?>> sources) {
@@ -23,7 +23,7 @@ public class RegisterColorSourceEvent extends Event {
             super(sources);
         }
 
-        public void register(IBeamColorSource<?> source){
+        public void register(IBeamColorSource<?> source) {
             gather.add(source);
         }
 
@@ -33,8 +33,9 @@ public class RegisterColorSourceEvent extends Event {
         public Post(List<IBeamColorSource<?>> sources) {
             super(sources);
         }
+
         //it could be safer to pass a comparator but whatever.
-        public void sortSource(Consumer<List<IBeamColorSource<?>>> consumer){
+        public void sortSource(Consumer<List<IBeamColorSource<?>>> consumer) {
             consumer.accept(gather);
         }
     }
