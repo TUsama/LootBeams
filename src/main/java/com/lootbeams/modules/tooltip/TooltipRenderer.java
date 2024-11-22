@@ -28,10 +28,10 @@ public class TooltipRenderer {
 
     public static void renderNameTag(PoseStack stack, MultiBufferSource buffer, ItemEntity item, Color color) {
         if (ConfigurationManager.request(Config.ADVANCED_TOOLTIPS)) return;
-/*
+
         if (Minecraft.getInstance().player.isCrouching() || ((((Boolean) ConfigurationManager.request(Config.RENDER_NAMETAGS_ONLOOK)) && isLookingAt(Minecraft.getInstance().player, item, Configuration.NAMETAG_LOOK_SENSITIVITY.get())))){
 
-        }*/
+        }
 
 /*
         //If player is crouching or looking at the item

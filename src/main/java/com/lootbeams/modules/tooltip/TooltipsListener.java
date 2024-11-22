@@ -1,11 +1,11 @@
 package com.lootbeams.modules.tooltip;
 
 import com.lootbeams.events.RenderLBTooltipsEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.neoforged.bus.api.SubscribeEvent;
 
 public class TooltipsListener {
 
-    @SubscribeEvent
+    @SubscribeEvent(receiveCanceled = true)
     public static void renderTooltips(RenderLBTooltipsEvent event){
 
     }

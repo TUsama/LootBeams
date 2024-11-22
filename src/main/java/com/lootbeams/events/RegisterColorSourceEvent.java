@@ -1,20 +1,18 @@
 package com.lootbeams.events;
 
 import com.lootbeams.modules.beam.color.IBeamColorSource;
+import lombok.Getter;
 import net.neoforged.bus.api.Event;
 
 import java.util.List;
 import java.util.function.Consumer;
 
+@Getter
 public abstract class RegisterColorSourceEvent extends Event {
     protected final List<IBeamColorSource<?>> gather;
 
     public RegisterColorSourceEvent(List<IBeamColorSource<?>> sources) {
         this.gather = sources;
-    }
-
-    public List<IBeamColorSource<?>> getGather() {
-        return gather;
     }
 
     public static class Pre extends RegisterColorSourceEvent {
