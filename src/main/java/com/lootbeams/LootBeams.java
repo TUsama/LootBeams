@@ -40,7 +40,7 @@ public class LootBeams {
 
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(com.lootbeams.ClientSetup::init);
 
-
+		ModulesManager.registerAll();
 	}
 
 

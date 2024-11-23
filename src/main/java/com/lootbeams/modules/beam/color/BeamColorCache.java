@@ -9,6 +9,7 @@ import java.util.WeakHashMap;
 
 public class BeamColorCache {
     private final static WeakHashMap<ItemStack, Color> colorMap = new WeakHashMap<>(500);
+    private final static Object lock = new Object();
 
     public static Either<Boolean, Color> ask(ItemEntity entity){
         ItemStack item = entity.getItem();
@@ -27,7 +28,9 @@ public class BeamColorCache {
         if (colorMap.containsKey(entity.getItem())){
             return false;
         }
-        colorMap.put(entity.getItem(), color);
+        synchronized (lock){
+            colorMap.put(entity.getItem(), color);
+        }
         return true;
     }
 }

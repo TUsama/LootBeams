@@ -32,15 +32,16 @@ public enum LBBuildInColorSource implements IBeamColorSource<Item> {
 
 
             Either<Item, Color> either = Either.left(item1);
-
-            order.stream()
+            return order.stream()
                     .filter(x -> !Container.list.contains(x))
                     .map(Order::valueOf)
                     .filter(order1 -> Container.configMap.get(order1) != null)
                     .map(order1 -> order1.mutate.apply(Container.configMap.get(order1), either))
                     .filter(x -> x.right().isEmpty())
                     .findFirst()
-                    .ifPresent(x -> optionalColor.map(y -> x.right()));
+                    .map(x -> x.right())
+                    .orElse(optionalColor);
+
 
         }
         return optionalColor;

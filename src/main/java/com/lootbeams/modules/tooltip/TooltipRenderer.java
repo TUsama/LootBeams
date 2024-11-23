@@ -107,15 +107,6 @@ public class TooltipRenderer {
                 if (tooltip.size() >= 2) {
                     net.minecraft.network.chat.Component tooltipRarity = tooltip.get(1);
 
-                    //Render dmcloot rarity small tags
-                    if (Configuration.DMCLOOT_COMPAT_RARITY.get() && ModList.get().isLoaded("dmcloot")) {
-                        if (item.getItem().hasTag() && item.getItem().getTag().contains("dmcloot.rarity")) {
-                            Color rarityColor = Configuration.WHITE_RARITIES.get() ? Color.WHITE : Provider.getRawColor(tooltipRarity);
-                            net.minecraft.network.chat.Component translatedRarity = Component.translatable("rarity.dmcloot." + item.getItem().getTag().getString("dmcloot.rarity"));
-                            renderText(fontrenderer, stack, buffer, translatedRarity.getString(), rarityColor.getRGB(), backgroundColor, backgroundAlpha);
-                            textDrawn = true;
-                        }
-                    }
 
                     //Render custom rarities
                     if (!textDrawn && Configuration.CUSTOM_RARITIES.get().contains(tooltipRarity.getString())) {
