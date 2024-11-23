@@ -144,6 +144,14 @@ dependencies {
     compileOnly fg.deobf("curse.maven:apotheosis-313970:5486368")
     compileOnly fg.deobf("curse.maven:placebo-283644:5414631")
     compileOnly fg.deobf("curse.maven:apothic-attributes-898963:5340012")
+
+    minecraftLibrary ("net.neoforged:bus:${neoforge_eventbus_version}") {
+        exclude group: "org.ow2.asm"
+        exclude group: "net.jodah"
+        exclude group: "org.apache.logging.log4j"
+        exclude group: "cpw.mods", module: "modlauncher"
+    }
+
     shade ("net.neoforged:bus:${neoforge_eventbus_version}") {
         exclude group: "org.ow2.asm"
         exclude group: "net.jodah"
@@ -156,8 +164,6 @@ dependencies {
 mixin{
     add sourceSets.main, "lootbeams.refmap.json"
     config 'lootbeams.mixins.json'
-    debug.verbose = true
-    debug.export = true
 }
 // Example for how to get properties into the manifest for reading at runtime.
 jar {
@@ -181,11 +187,17 @@ tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
 }
 
+components.java {
+    withVariantsFromConfiguration(project.configurations.shadowRuntimeElements) {
+        skip()
+    }
+}
+
 
 shadowJar {
     archiveClassifier = ''
     configurations = [project.configurations.shade]
-    relocate 'net.neoforged:bus:${neoforge_eventbus_version}', "${project.group}.relocated.net.neoforged:bus:${neoforge_eventbus_version}"
+    //relocate 'net.neoforged.bus', "${project.group}.relocated.net.neoforged.bus"
     finalizedBy 'reobfShadowJar'
 }
 

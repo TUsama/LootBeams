@@ -1,6 +1,5 @@
 package com.lootbeams;
 
-import com.google.common.collect.ImmutableList;
 import com.lootbeams.config.Config;
 import com.lootbeams.config.ConfigurationManager;
 import com.lootbeams.config.IConfigurationProvider;
@@ -45,6 +44,7 @@ public class Configuration implements IConfigurationProvider {
 
 	public static ForgeConfigSpec.BooleanValue PARTICLES;
 
+	public static ForgeConfigSpec.BooleanValue ENABLE_TOOLTIPS;
 	public static ForgeConfigSpec.BooleanValue ADVANCED_TOOLTIPS;
 	public static ForgeConfigSpec.BooleanValue WORLDSPACE_TOOLTIPS;
 	public static ForgeConfigSpec.BooleanValue BORDERS;
@@ -237,6 +237,8 @@ public class Configuration implements IConfigurationProvider {
 
 
 		clientBuilder.comment("Item nametags").push("Nametags");
+
+		ENABLE_TOOLTIPS = clientBuilder.comment("If tooltips feature should be enabled.").define("enable_tooltips", true);
 		ADVANCED_TOOLTIPS = clientBuilder.comment("If vanilla tooltips should be rendered on items in world.").define("advanced_tooltips", true);
 
 
@@ -391,5 +393,6 @@ public class Configuration implements IConfigurationProvider {
 		ConfigurationManager.insert(Config.SOUND_ONLY_EQUIPMENT, () -> SOUND_ONLY_EQUIPMENT.get());
 		ConfigurationManager.insert(Config.SOUND_ONLY_WHITELIST, () -> SOUND_ONLY_WHITELIST.get());
 		ConfigurationManager.insert(Config.SOUND_ONLY_BLACKLIST, () -> SOUND_ONLY_BLACKLIST.get());
+		ConfigurationManager.insert(Config.ENABLE_TOOLTIPS, () -> ENABLE_TOOLTIPS.get());
 	}
 }

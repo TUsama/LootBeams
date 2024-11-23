@@ -2,7 +2,6 @@ package com.lootbeams.modules.beam.color;
 
 import com.mojang.datafixers.util.Either;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 import java.awt.*;

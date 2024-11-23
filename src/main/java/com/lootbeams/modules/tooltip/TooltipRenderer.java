@@ -3,8 +3,11 @@ package com.lootbeams.modules.tooltip;
 import com.lootbeams.Configuration;
 import com.lootbeams.config.Config;
 import com.lootbeams.config.ConfigurationManager;
+import com.lootbeams.modules.beam.color.BeamColorCache;
+import com.lootbeams.modules.beam.color.IBeamColorSource;
 import com.lootbeams.utils.Provider;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.datafixers.util.Either;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.player.LocalPlayer;
@@ -27,8 +30,11 @@ import java.util.concurrent.ConcurrentHashMap;
 public class TooltipRenderer {
     public static final Map<ItemEntity, List<Component>> TOOLTIP_CACHE = new ConcurrentHashMap<>();
 
-    public static void renderNameTag(PoseStack stack, MultiBufferSource buffer, ItemEntity item, Color color, Quaternionf camera) {
+    public static void renderNameTag(PoseStack stack, MultiBufferSource buffer, ItemEntity item, Quaternionf camera) {
         if (Minecraft.getInstance().player.isCrouching() || ((((Boolean) ConfigurationManager.request(Config.RENDER_NAMETAGS_ONLOOK)) && isLookingAt(Minecraft.getInstance().player, item, Configuration.NAMETAG_LOOK_SENSITIVITY.get())))) {
+            Either<Boolean, Color> ask = BeamColorCache.ask(item);
+            if (ask.right().isEmpty()) return;
+            Color color = ask.right().orElse(IBeamColorSource.DEFAULT);
 /*
             {
                 stack.pushPose();

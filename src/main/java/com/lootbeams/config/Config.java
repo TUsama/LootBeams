@@ -41,6 +41,7 @@ public enum Config {
 
     PARTICLES(Boolean.class),
 
+    ENABLE_TOOLTIPS(Boolean.class),
     ADVANCED_TOOLTIPS(Boolean.class),
     WORLDSPACE_TOOLTIPS(Boolean.class),
     BORDERS(Boolean.class),

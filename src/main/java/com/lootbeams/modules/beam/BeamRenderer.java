@@ -7,7 +7,6 @@ import com.lootbeams.config.Config;
 import com.lootbeams.config.ConfigurationManager;
 import com.lootbeams.modules.beam.color.BeamColorCache;
 import com.lootbeams.modules.beam.vfx.VFXParticle;
-import com.lootbeams.utils.Checker;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.datafixers.util.Either;

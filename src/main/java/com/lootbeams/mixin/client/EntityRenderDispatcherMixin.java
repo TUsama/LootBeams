@@ -1,10 +1,9 @@
 package com.lootbeams.mixin.client;
 
-import com.lootbeams.Configuration;
 import com.lootbeams.config.Config;
 import com.lootbeams.config.ConfigurationManager;
-import com.lootbeams.events.RenderLBTooltipsEvent;
-import com.lootbeams.events.RenderLootBeamEvent;
+import com.lootbeams.events.EntityRenderDispatcherHookEvent;
+import com.lootbeams.events.LBEventBus;
 import com.lootbeams.modules.beam.BeamRenderer;
 import com.lootbeams.utils.Checker;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -19,8 +18,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import java.util.List;
 
 @Mixin(EntityRenderDispatcher.class)
 public abstract class EntityRenderDispatcherMixin {
@@ -45,14 +42,17 @@ public abstract class EntityRenderDispatcherMixin {
 
         if (!(shouldRender && (!((Boolean) ConfigurationManager.request(Config.REQUIRE_ON_GROUND)) || itemEntity.onGround()))) return;
 
-        RenderLootBeamEvent renderLootBeamEvent = new RenderLootBeamEvent();
-        RenderLBTooltipsEvent renderLBTooltipsEvent = new RenderLBTooltipsEvent();
-        if (!renderLootBeamEvent.isCanceled()) {
-            BeamRenderer.renderLootBeam(poseStack, buffers, partialTicks, entity.level().getGameTime(), itemEntity, cameraOrientation());
+        if (ConfigurationManager.request(Config.ENABLE_BEAM)){
+            EntityRenderDispatcherHookEvent.RenderLootBeamEvent renderLootBeamEvent = new EntityRenderDispatcherHookEvent.RenderLootBeamEvent(itemEntity, worldX, worldY, worldZ, entityYRot, partialTicks, poseStack, buffers, light);
+            LBEventBus.INSTANCE.post(renderLootBeamEvent);
         }
-        if (!renderLBTooltipsEvent.isCanceled()) {
 
+        if (ConfigurationManager.request(Config.ENABLE_TOOLTIPS)){
+            EntityRenderDispatcherHookEvent.RenderLBTooltipsEvent renderLBTooltipsEvent = new EntityRenderDispatcherHookEvent.RenderLBTooltipsEvent(itemEntity, worldX, worldY, worldZ, entityYRot, partialTicks, poseStack, buffers, light);
+            LBEventBus.INSTANCE.post(renderLBTooltipsEvent);
         }
+
+
     }
 
 
