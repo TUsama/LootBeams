@@ -8,6 +8,7 @@ logoFile = "banner.png"
 authors = "shiroroku(elise)"
 credits = "amo"
 displayName = "LootBeams"
+displayTest="IGNORE_ALL_VERSION"
 displayURL = "https://www.curseforge.com/minecraft/mc-mods/loot-beams"
 description = '''
 Renders highly configurable colored beams on dropped items!

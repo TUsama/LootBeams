@@ -5,9 +5,10 @@
       2) Delete NBT compat, any developer should never use this tbh.
       3) Drastically decrease the number of vertexes needed by render.
       4) Remove 80% of the unnecessary matrix transformation
-      5) Remove config: WHITE_CENTER, WHITE_RARITIES, VANILLA_RARITIES, VANILLA_RARITIES
-      6) add new config: SHOULD_ADD_RARITY
-        
-    * Tooltip:
+      5) Remove configs: WHITE_CENTER, WHITE_RARITIES, VANILLA_RARITIES
+      6) add new configs: ENABLE_RARITY, ENABLE_TOOLTIPS, ENABLE_BEAM
+      7) change old configs: CUSTOM_RARITIES
+
+     * Tooltip:
       1) remove related feature because this should be a standalone mod.
     

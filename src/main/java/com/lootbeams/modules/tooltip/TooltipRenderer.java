@@ -25,6 +25,7 @@ import org.joml.Quaternionf;
 import java.awt.*;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class TooltipRenderer {
@@ -63,10 +64,10 @@ public class TooltipRenderer {
 
 
             //If player is crouching or looking at the item
-            if (Minecraft.getInstance().player.isCrouching() || (Configuration.RENDER_NAMETAGS_ONLOOK.get() && isLookingAt(Minecraft.getInstance().player, item, Configuration.NAMETAG_LOOK_SENSITIVITY.get()))) {
-                float foregroundAlpha = Configuration.NAMETAG_TEXT_ALPHA.get().floatValue();
-                float backgroundAlpha = Configuration.NAMETAG_BACKGROUND_ALPHA.get().floatValue();
-                double yOffset = Configuration.NAMETAG_Y_OFFSET.get();
+            if (Minecraft.getInstance().player.isCrouching() || (Configuration.RENDER_NAMETAGS_ONLOOK.get() && isLookingAt(Minecraft.getInstance().player, item, ConfigurationManager.request(Config.NAMETAG_LOOK_SENSITIVITY)))) {
+                float foregroundAlpha = ConfigurationManager.request(Double.class, Config.NAMETAG_TEXT_ALPHA).floatValue();
+                float backgroundAlpha = ConfigurationManager.request(Double.class, Config.NAMETAG_BACKGROUND_ALPHA).floatValue();
+                double yOffset = ConfigurationManager.request(Double.class, Config.NAMETAG_Y_OFFSET);
                 int foregroundColor = new Color(color.getRed(), color.getGreen(), color.getBlue(), (int) (255 * foregroundAlpha)).getRGB();
                 int backgroundColor = new Color(color.getRed(), color.getGreen(), color.getBlue(), (int) (255 * backgroundAlpha)).getRGB();
 
@@ -97,32 +98,12 @@ public class TooltipRenderer {
                 stack.translate(0.0D, 10, 0.0D);
                 stack.scale(0.75f, 0.75f, 0.75f);
                 boolean textDrawn = false;
-                List<net.minecraft.network.chat.Component> tooltip;
-                if (!TOOLTIP_CACHE.containsKey(item)) {
-                    tooltip = item.getItem().getTooltipLines(null, TooltipFlag.Default.NORMAL);
-                    TOOLTIP_CACHE.put(item, tooltip);
-                } else {
-                    tooltip = TOOLTIP_CACHE.get(item);
-                }
-                if (tooltip.size() >= 2) {
-                    net.minecraft.network.chat.Component tooltipRarity = tooltip.get(1);
+                List<Component> tooltip;
 
+                Either<Boolean, List<Component>> ask1 = TooltipsCache.ask(item);
+                if (ask1.right().isEmpty()) return;
+                List<Component> right = ask1.right().get();
 
-                    //Render custom rarities
-                    if (!textDrawn && Configuration.CUSTOM_RARITIES.get().contains(tooltipRarity.getString())) {
-                        Color rarityColor = Configuration.WHITE_RARITIES.get() ? Color.WHITE : Provider.getRawColor(tooltipRarity);
-                        foregroundColor = new Color(rarityColor.getRed(), rarityColor.getGreen(), rarityColor.getBlue(), (int) (255 * foregroundAlpha)).getRGB();
-                        backgroundColor = new Color(rarityColor.getRed(), rarityColor.getGreen(), rarityColor.getBlue(), (int) (255 * backgroundAlpha)).getRGB();
-                        renderText(fontrenderer, stack, buffer, tooltipRarity.getString(), foregroundColor, backgroundColor, backgroundAlpha);
-                    }
-
-                }
-                if (!textDrawn && Configuration.VANILLA_RARITIES.get()) {
-                    Color rarityColor = Provider.getRawColor(tooltip.get(0));
-                    foregroundColor = new Color(rarityColor.getRed(), rarityColor.getGreen(), rarityColor.getBlue(), (int) (255 * foregroundAlpha)).getRGB();
-                    backgroundColor = new Color(rarityColor.getRed(), rarityColor.getGreen(), rarityColor.getBlue(), (int) (255 * backgroundAlpha)).getRGB();
-                    renderText(fontrenderer, stack, buffer, Provider.getRarity(item.getItem()), foregroundColor, backgroundColor, backgroundAlpha);
-                }
 
                 stack.popPose();
             }

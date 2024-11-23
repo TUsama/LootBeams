@@ -56,14 +56,14 @@ public class Configuration implements IConfigurationProvider {
 	public static ForgeConfigSpec.DoubleValue NAMETAG_SCALE;
 	public static ForgeConfigSpec.DoubleValue NAMETAG_Y_OFFSET;
 	public static ForgeConfigSpec.BooleanValue DMCLOOT_COMPAT_RARITY;
+	public static ForgeConfigSpec.BooleanValue ENABLE_RARITY;
 	public static ForgeConfigSpec.ConfigValue<List<String>> CUSTOM_RARITIES;
-	public static ForgeConfigSpec.BooleanValue WHITE_RARITIES;
 	public static ForgeConfigSpec.BooleanValue SCREEN_TOOLTIPS_REQUIRE_CROUCH;
 	public static ForgeConfigSpec.BooleanValue COMBINE_NAME_AND_RARITY;
 
 	public static ForgeConfigSpec.BooleanValue GLOWING_BEAM;
 
-	public static ForgeConfigSpec.BooleanValue VANILLA_RARITIES;
+
 	public static ForgeConfigSpec.BooleanValue WHITE_CENTER;
 	public static ForgeConfigSpec.DoubleValue PARTICLE_SIZE;
 	public static ForgeConfigSpec.DoubleValue PARTICLE_SPEED;
@@ -276,7 +276,7 @@ public class Configuration implements IConfigurationProvider {
 
 		ENABLE_RARITY = clientBuilder.comment("If LB should render the rarity text on the name tag.").define("enable_rarity", true);
 
-		CUSTOM_RARITIES = clientBuilder.comment("Define what the smaller tag should render on. Example: \"Exotic\", \"Ancient\". The string supplied has to be the tooltip line below the name. This is really only used for modpacks.").define("custom_rarities", new ArrayList<>());
+		CUSTOM_RARITIES = clientBuilder.comment("Add custom rarity text for your modpack. To use this you need to declare the new rarity with the format of Tag, like '#rarity:mythic'. You also need to declare its color in COLOR_OVERRIDES config. This is really only used for modpacks.").define("custom_rarities", new ArrayList<>());
 
 
 		SCREEN_TOOLTIPS_REQUIRE_CROUCH = clientBuilder.comment("If the player should be crouching to see extended advanced tooltips.").define("screen_tooltips_require_crouch", true);
@@ -377,8 +377,6 @@ public class Configuration implements IConfigurationProvider {
 		ConfigurationManager.insert(Config.NAMETAG_Y_OFFSET, () -> NAMETAG_Y_OFFSET.get());
 		ConfigurationManager.insert(Config.DMCLOOT_COMPAT_RARITY, () -> DMCLOOT_COMPAT_RARITY.get());
 		ConfigurationManager.insert(Config.CUSTOM_RARITIES, () -> CUSTOM_RARITIES.get());
-		ConfigurationManager.insert(Config.WHITE_RARITIES, () -> WHITE_RARITIES.get());
-		ConfigurationManager.insert(Config.VANILLA_RARITIES, () -> VANILLA_RARITIES.get());
 		ConfigurationManager.insert(Config.SCREEN_TOOLTIPS_REQUIRE_CROUCH, () -> SCREEN_TOOLTIPS_REQUIRE_CROUCH.get());
 		ConfigurationManager.insert(Config.COMBINE_NAME_AND_RARITY, () -> COMBINE_NAME_AND_RARITY.get());
 		ConfigurationManager.insert(Config.SOUND, () -> SOUND.get());

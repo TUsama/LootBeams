@@ -11,13 +11,13 @@ public enum Config {
     ONLY_EQUIPMENT(Boolean.class),
     ONLY_RARE(Boolean.class),
 
-    WHITELIST(new ClassToken(List.class, String.class)),
-    BLACKLIST(new ClassToken(List.class, String.class)),
-    COLOR_OVERRIDES(new ClassToken(List.class, String.class)),
+    WHITELIST(List.class),
+    BLACKLIST(List.class),
+    COLOR_OVERRIDES(List.class),
 
 
 
-    COLOR_APPLY_ORDER(new ClassToken(List.class, String.class)),
+    COLOR_APPLY_ORDER(List.class),
 
 
 
@@ -54,7 +54,7 @@ public enum Config {
     NAMETAG_SCALE(Double.class),
     NAMETAG_Y_OFFSET(Double.class),
     DMCLOOT_COMPAT_RARITY(Boolean.class),
-    CUSTOM_RARITIES(new ClassToken(List.class, String.class)),
+    CUSTOM_RARITIES(List.class),
     WHITE_RARITIES(Boolean.class),
     SCREEN_TOOLTIPS_REQUIRE_CROUCH(Boolean.class),
     COMBINE_NAME_AND_RARITY(Boolean.class),
@@ -85,56 +85,17 @@ public enum Config {
     SOUND_VOLUME(Double.class),
     SOUND_ONLY_RARE(Boolean.class),
     SOUND_ONLY_EQUIPMENT(Boolean.class),
-    SOUND_ONLY_WHITELIST(new ClassToken(List.class, String.class)),
-    SOUND_ONLY_BLACKLIST(new ClassToken(List.class, String.class)),
+    SOUND_ONLY_WHITELIST(List.class),
+    SOUND_ONLY_BLACKLIST(List.class),
     SOUND_ALL_ITEMS(Boolean.class);
 
-    private final Type type;
+    private final Class<?> type;
 
-    Config(Type type) {
+    Config(Class<?> type) {
         this.type = type;
     }
 
-    public Type getType() {
+    public Class<?> getType() {
         return type;
-    }
-
-    private static class ClassToken implements ParameterizedType {
-        private final Class<?> raw;
-        private final Type[] args;
-
-        ClassToken(Class<?> raw, Type... args) {
-            this.raw = raw;
-            this.args = args;
-        }
-
-        @Override
-        public Type[] getActualTypeArguments() {
-            return args;
-        }
-
-        @Override
-        public Type getRawType() {
-            return raw;
-        }
-
-        @Override
-        public Type getOwnerType() {
-            return null;
-        }
-
-        @Override
-        public String toString() {
-            StringBuilder sb = new StringBuilder(raw.getTypeName());
-            if (args.length > 0) {
-                sb.append("<");
-                for (int i = 0; i < args.length; i++) {
-                    sb.append(args[i].getTypeName());
-                    if (i < args.length - 1) sb.append(", ");
-                }
-                sb.append(">");
-            }
-            return sb.toString();
-        }
     }
 }
