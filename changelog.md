@@ -5,7 +5,7 @@
       2) Delete NBT compat, any developer should never use this tbh.
       3) Drastically decrease the number of vertexes needed by render.
       4) Remove 80% of the unnecessary matrix transformation
-      5) Remove configs: WHITE_CENTER, WHITE_RARITIES, VANILLA_RARITIES
+      5) Remove configs: WHITE_CENTER, WHITE_RARITIES, VANILLA_RARITIES, ADVANCED_TOOLTIPS, WORLDSPACE_TOOLTIPS, DMCLOOT_COMPAT_RARITY, SCREEN_TOOLTIPS_REQUIRE_CROUCH, COMBINE_NAME_AND_RARITY
       6) add new configs: ENABLE_RARITY, ENABLE_TOOLTIPS, ENABLE_BEAM
       7) change old configs: CUSTOM_RARITIES
 

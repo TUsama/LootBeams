@@ -2,7 +2,7 @@ package com.lootbeams;
 
 import com.lootbeams.compat.ApotheosisCompat;
 import com.lootbeams.modules.beam.BeamRenderer;
-import com.lootbeams.modules.tooltip.TooltipRenderer;
+import com.lootbeams.modules.tooltip.nametag.NameTagRenderer;
 import com.lootbeams.utils.Checker;
 import com.lootbeams.utils.Provider;
 import com.mojang.blaze3d.platform.Window;
@@ -69,7 +69,7 @@ public class ClientSetup {
 		if (true){
 			return;
 		}
-
+/*
 		if(event.getOverlay().equals(VanillaGuiOverlay.CROSSHAIR.type())){
 			if(Configuration.ADVANCED_TOOLTIPS.get() && (Minecraft.getInstance().screen == null || Minecraft.getInstance().screen instanceof ChatScreen)) {
 				Player player = Minecraft.getInstance().player;
@@ -122,7 +122,7 @@ public class ClientSetup {
 					}
 				}
 			}
-		}
+		}*/
 	}
 
 	public static Vector3f worldToScreenSpace(Vec3 pos, float partialTicks) {
@@ -190,7 +190,7 @@ public class ClientSetup {
 
 	public static void onItemCreation(EntityJoinLevelEvent event){
 		if (event.getEntity() instanceof ItemEntity ie) {
-			TooltipRenderer.TOOLTIP_CACHE.computeIfAbsent(ie, itemEntity -> itemEntity.getItem().getTooltipLines(null, TooltipFlag.Default.NORMAL));
+			NameTagRenderer.TOOLTIP_CACHE.computeIfAbsent(ie, itemEntity -> itemEntity.getItem().getTooltipLines(null, TooltipFlag.Default.NORMAL));
 			if (!BeamRenderer.LIGHT_CACHE.contains(ie)) {
 				BeamRenderer.LIGHT_CACHE.add(ie);
 			}
@@ -214,7 +214,7 @@ public class ClientSetup {
 
 	public static void entityRemoval(EntityLeaveLevelEvent event) {
 		if (event.getEntity() instanceof ItemEntity ie) {
-			TooltipRenderer.TOOLTIP_CACHE.remove(ie);
+			NameTagRenderer.TOOLTIP_CACHE.remove(ie);
 			BeamRenderer.LIGHT_CACHE.remove(ie);
 		}
 	}

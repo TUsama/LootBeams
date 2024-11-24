@@ -42,8 +42,9 @@ public enum Config {
     PARTICLES(Boolean.class),
 
     ENABLE_TOOLTIPS(Boolean.class),
-    ADVANCED_TOOLTIPS(Boolean.class),
-    WORLDSPACE_TOOLTIPS(Boolean.class),
+
+
+
     BORDERS(Boolean.class),
     RENDER_NAMETAGS(Boolean.class),
     RENDER_NAMETAGS_ONLOOK(Boolean.class),
@@ -53,15 +54,11 @@ public enum Config {
     NAMETAG_BACKGROUND_ALPHA(Double.class),
     NAMETAG_SCALE(Double.class),
     NAMETAG_Y_OFFSET(Double.class),
-    DMCLOOT_COMPAT_RARITY(Boolean.class),
+
     CUSTOM_RARITIES(List.class),
-    WHITE_RARITIES(Boolean.class),
-    SCREEN_TOOLTIPS_REQUIRE_CROUCH(Boolean.class),
-    COMBINE_NAME_AND_RARITY(Boolean.class),
 
     GLOWING_BEAM(Boolean.class),
 
-    VANILLA_RARITIES(Boolean.class),
     WHITE_CENTER(Boolean.class),
     PARTICLE_SIZE(Double.class),
     PARTICLE_SPEED(Double.class),
@@ -97,5 +94,11 @@ public enum Config {
 
     public Class<?> getType() {
         return type;
+    }
+
+    public enum TooltipsStatus {
+        NONE,
+        NAME_TAG,
+        FULL;
     }
 }

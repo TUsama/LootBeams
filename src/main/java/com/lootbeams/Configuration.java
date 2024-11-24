@@ -4,6 +4,7 @@ import com.lootbeams.config.Config;
 import com.lootbeams.config.ConfigurationManager;
 import com.lootbeams.config.IConfigurationProvider;
 import com.lootbeams.modules.beam.color.Order;
+import com.lootbeams.modules.tooltip.nametag.NameTagCache;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.common.Mod;
 
@@ -43,9 +44,7 @@ public class Configuration implements IConfigurationProvider {
 
 	public static ForgeConfigSpec.BooleanValue PARTICLES;
 
-	public static ForgeConfigSpec.BooleanValue ENABLE_TOOLTIPS;
-	public static ForgeConfigSpec.BooleanValue ADVANCED_TOOLTIPS;
-	public static ForgeConfigSpec.BooleanValue WORLDSPACE_TOOLTIPS;
+	public static ForgeConfigSpec.EnumValue<Config.TooltipsStatus> ENABLE_TOOLTIPS;
 	public static ForgeConfigSpec.BooleanValue BORDERS;
 	public static ForgeConfigSpec.BooleanValue RENDER_NAMETAGS;
 	public static ForgeConfigSpec.BooleanValue RENDER_NAMETAGS_ONLOOK;
@@ -55,11 +54,8 @@ public class Configuration implements IConfigurationProvider {
 	public static ForgeConfigSpec.DoubleValue NAMETAG_BACKGROUND_ALPHA;
 	public static ForgeConfigSpec.DoubleValue NAMETAG_SCALE;
 	public static ForgeConfigSpec.DoubleValue NAMETAG_Y_OFFSET;
-	public static ForgeConfigSpec.BooleanValue DMCLOOT_COMPAT_RARITY;
-	public static ForgeConfigSpec.BooleanValue ENABLE_RARITY;
 	public static ForgeConfigSpec.ConfigValue<List<String>> CUSTOM_RARITIES;
-	public static ForgeConfigSpec.BooleanValue SCREEN_TOOLTIPS_REQUIRE_CROUCH;
-	public static ForgeConfigSpec.BooleanValue COMBINE_NAME_AND_RARITY;
+
 
 	public static ForgeConfigSpec.BooleanValue GLOWING_BEAM;
 
@@ -237,11 +233,8 @@ public class Configuration implements IConfigurationProvider {
 
 		clientBuilder.comment("Item nametags").push("Nametags");
 
-		ENABLE_TOOLTIPS = clientBuilder.comment("If tooltips feature should be enabled.").define("enable_tooltips", true);
-		ADVANCED_TOOLTIPS = clientBuilder.comment("If vanilla tooltips should be rendered on items in world.").define("advanced_tooltips", true);
+		ENABLE_TOOLTIPS = clientBuilder.comment("If tooltips feature should be enabled.").defineEnum("enable_tooltips", Config.TooltipsStatus.NAME_TAG);
 
-
-		WORLDSPACE_TOOLTIPS = clientBuilder.comment("If tooltips should be rendered in world.").define("worldspace_tooltips", true);
 
 
 		BORDERS = clientBuilder.comment("Render nametags as bordered. Set to false for flat nametag with background.").define("borders", true);
@@ -271,18 +264,13 @@ public class Configuration implements IConfigurationProvider {
 		NAMETAG_Y_OFFSET = clientBuilder.comment("The Y-offset of the nametag.").defineInRange("nametag_y_offset", 0.75D, -30D, 30D);
 
 
-		DMCLOOT_COMPAT_RARITY = clientBuilder.comment("If a smaller tag should be rendered under with DMCLoot rarities.").define("dmcloot_compat_rarity", true);
 
 
-		ENABLE_RARITY = clientBuilder.comment("If LB should render the rarity text on the name tag.").define("enable_rarity", true);
-
-		CUSTOM_RARITIES = clientBuilder.comment("Add custom rarity text for your modpack. To use this you need to declare the new rarity with the format of Tag, like '#rarity:mythic'. You also need to declare its color in COLOR_OVERRIDES config. This is really only used for modpacks.").define("custom_rarities", new ArrayList<>());
+		CUSTOM_RARITIES = clientBuilder.comment("Add custom rarity text for your modpack. To use this you need to declare the new rarity with the format of Tag, like '#rarity:mythic'. You also need to declare its color in COLOR_OVERRIDES config. You can also provide the lang if you want it can be localized, the format is '" + NameTagCache.langKeyFormat + "xxx'. This is really only used for modpacks.").define("custom_rarities", new ArrayList<>());
 
 
-		SCREEN_TOOLTIPS_REQUIRE_CROUCH = clientBuilder.comment("If the player should be crouching to see extended advanced tooltips.").define("screen_tooltips_require_crouch", true);
 
 
-		COMBINE_NAME_AND_RARITY = clientBuilder.comment("If the name and rarity should be combined into one tooltip.").define("combine_name_and_rarity", false);
 
 
 		clientBuilder.pop();
@@ -364,8 +352,7 @@ public class Configuration implements IConfigurationProvider {
 		ConfigurationManager.insert(Config.ONLY_EQUIPMENT, () -> ONLY_EQUIPMENT.get());
 		ConfigurationManager.insert(Config.WHITELIST, () -> WHITELIST.get());
 		ConfigurationManager.insert(Config.BLACKLIST, () -> BLACKLIST.get());
-		ConfigurationManager.insert(Config.ADVANCED_TOOLTIPS, () -> ADVANCED_TOOLTIPS.get());
-		ConfigurationManager.insert(Config.WORLDSPACE_TOOLTIPS, () -> WORLDSPACE_TOOLTIPS.get());
+
 		ConfigurationManager.insert(Config.BORDERS, () -> BORDERS.get());
 		ConfigurationManager.insert(Config.RENDER_NAMETAGS, () -> RENDER_NAMETAGS.get());
 		ConfigurationManager.insert(Config.RENDER_NAMETAGS_ONLOOK, () -> RENDER_NAMETAGS_ONLOOK.get());
@@ -375,10 +362,9 @@ public class Configuration implements IConfigurationProvider {
 		ConfigurationManager.insert(Config.NAMETAG_BACKGROUND_ALPHA, () -> NAMETAG_BACKGROUND_ALPHA.get());
 		ConfigurationManager.insert(Config.NAMETAG_SCALE, () -> NAMETAG_SCALE.get());
 		ConfigurationManager.insert(Config.NAMETAG_Y_OFFSET, () -> NAMETAG_Y_OFFSET.get());
-		ConfigurationManager.insert(Config.DMCLOOT_COMPAT_RARITY, () -> DMCLOOT_COMPAT_RARITY.get());
+
 		ConfigurationManager.insert(Config.CUSTOM_RARITIES, () -> CUSTOM_RARITIES.get());
-		ConfigurationManager.insert(Config.SCREEN_TOOLTIPS_REQUIRE_CROUCH, () -> SCREEN_TOOLTIPS_REQUIRE_CROUCH.get());
-		ConfigurationManager.insert(Config.COMBINE_NAME_AND_RARITY, () -> COMBINE_NAME_AND_RARITY.get());
+
 		ConfigurationManager.insert(Config.SOUND, () -> SOUND.get());
 		ConfigurationManager.insert(Config.SOUND_VOLUME, () -> SOUND_VOLUME.get());
 		ConfigurationManager.insert(Config.SOUND_ALL_ITEMS, () -> SOUND_ALL_ITEMS.get());

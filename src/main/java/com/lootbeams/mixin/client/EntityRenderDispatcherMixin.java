@@ -46,8 +46,8 @@ public abstract class EntityRenderDispatcherMixin {
             EntityRenderDispatcherHookEvent.RenderLootBeamEvent renderLootBeamEvent = new EntityRenderDispatcherHookEvent.RenderLootBeamEvent(itemEntity, worldX, worldY, worldZ, entityYRot, partialTicks, poseStack, buffers, light);
             LBEventBus.INSTANCE.post(renderLootBeamEvent);
         }
-
-        if (ConfigurationManager.request(Config.ENABLE_TOOLTIPS)){
+        Config.TooltipsStatus request = ConfigurationManager.request(Config.ENABLE_TOOLTIPS);
+        if (request != Config.TooltipsStatus.NONE){
             EntityRenderDispatcherHookEvent.RenderLBTooltipsEvent renderLBTooltipsEvent = new EntityRenderDispatcherHookEvent.RenderLBTooltipsEvent(itemEntity, worldX, worldY, worldZ, entityYRot, partialTicks, poseStack, buffers, light);
             LBEventBus.INSTANCE.post(renderLBTooltipsEvent);
         }
