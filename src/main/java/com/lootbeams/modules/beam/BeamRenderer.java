@@ -5,6 +5,7 @@ import com.lootbeams.ModClientEvents;
 import com.lootbeams.compat.ApotheosisCompat;
 import com.lootbeams.config.Config;
 import com.lootbeams.config.ConfigurationManager;
+import com.lootbeams.modules.rarity.ItemWithRarity;
 import com.lootbeams.modules.rarity.RarityCache;
 import com.lootbeams.modules.beam.vfx.VFXParticle;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -33,15 +34,14 @@ public class BeamRenderer {
     private static final Random RANDOM = new Random();
 
 
-    public static void renderLootBeam(PoseStack stack, MultiBufferSource buffer, float pticks, long worldtime, ItemEntity itemEntity, Quaternionf quaternionf) {
-
+    public static void renderLootBeam(PoseStack stack, MultiBufferSource buffer, float pticks, ItemWithRarity itemWithRarity, Quaternionf quaternionf) {
+        ItemEntity itemEntity = itemWithRarity.item();
         Item item = itemEntity.getItem().getItem();
 
 
 
-        Either<Boolean, Color> ask = RarityCache.ask(itemEntity);
-        if (ask.right().isEmpty()) return;
-        Color color = ask.right().get();
+
+        Color color = itemWithRarity.rarity().getColor();
         float R = color.getRed() / 255f;
         float G = color.getGreen() / 255f;
         float B = color.getBlue() / 255f;

@@ -3,6 +3,7 @@ package com.lootbeams.modules.tooltip.nametag;
 import com.lootbeams.Configuration;
 import com.lootbeams.config.Config;
 import com.lootbeams.config.ConfigurationManager;
+import com.lootbeams.modules.rarity.ItemWithRarity;
 import com.lootbeams.modules.rarity.RarityCache;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Either;
@@ -25,11 +26,11 @@ import java.util.concurrent.ConcurrentHashMap;
 public class NameTagRenderer {
     public static final Map<ItemEntity, List<Component>> TOOLTIP_CACHE = new ConcurrentHashMap<>();
 
-    public static void renderNameTag(PoseStack stack, MultiBufferSource buffer, ItemEntity item, Quaternionf camera) {
+    public static void renderNameTag(PoseStack stack, MultiBufferSource buffer, ItemWithRarity itemWithRarity) {
+        ItemEntity item = itemWithRarity.item();
         if (Minecraft.getInstance().player.isCrouching() || ((((Boolean) ConfigurationManager.request(Config.RENDER_NAMETAGS_ONLOOK)) && isLookingAt(Minecraft.getInstance().player, item, Configuration.NAMETAG_LOOK_SENSITIVITY.get())))) {
-            Either<Boolean, Color> ask = RarityCache.ask(item);
-            if (ask.right().isEmpty()) return;
-            Color color = ask.right().orElse(IBeamOverrideColorSource.DEFAULT);
+
+            Color color = itemWithRarity.rarity().getColor();
 /*
             {
                 stack.pushPose();
@@ -77,11 +78,15 @@ public class NameTagRenderer {
                 //Render stack counts on nametag
                 Font fontrenderer = Minecraft.getInstance().font;
 
-
-
-                //Move closer to the player so we dont render in beam, and render the tag
+                List<String> ask = NameTagCache.ask(item);
                 stack.translate(0, 0, -10);
-                renderText(fontrenderer, stack, buffer, itemName, foregroundColor, backgroundColor, backgroundAlpha);
+                for (String s : ask) {
+                    renderText(fontrenderer, stack, buffer, s, foregroundColor, backgroundColor, backgroundAlpha);
+                }
+                stack.popPose();
+                //Move closer to the player so we dont render in beam, and render the tag
+
+
 /*
                 //Render small tags
                 stack.translate(0.0D, 10, 0.0D);
@@ -94,7 +99,7 @@ public class NameTagRenderer {
                 List<Component> right = ask1.right().get();*/
 
 
-                stack.popPose();
+
             }
         }
 

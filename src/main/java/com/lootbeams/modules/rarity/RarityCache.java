@@ -16,15 +16,18 @@ public class RarityCache implements ILBModuleRenderCache<LBRarityContainer, Item
 
     private static boolean mark = false;
 
-    public static Either<Boolean, SoftReference<ItemWithRarity>> ask(ItemEntity entity) {
+    public static SoftReference<ItemWithRarity> ask(ItemEntity entity) {
         ItemStack item = entity.getItem();
 
         if (rarityMap.containsKey(item)) {
-
-            return Either.right(rarityMap.get(item));
+            if (rarityMap.get(item).get() == null) {
+                INSTANCE.handle(LBRarityContainer.INSTANCE, entity, mark);
+            }
+            return rarityMap.get(item);
         }
         INSTANCE.handle(LBRarityContainer.INSTANCE, entity, mark);
-        return Either.left(false);
+
+        return rarityMap.get(item);
     }
 
     protected static boolean provide(ItemEntity entity, SoftReference<ItemWithRarity> itemWithRarity) {

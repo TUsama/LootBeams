@@ -30,17 +30,17 @@ public class NameTagCache implements ILBModuleRenderCache<NameTagCache.Data, Ite
 
     public final static String langKeyFormat = "lootbeams.fake_rarity.";
 
-    public static Either<Boolean, List<String>> ask(ItemEntity entity) {
+    public static List<String> ask(ItemEntity entity) {
         ItemStack item = entity.getItem();
 
         if (nameTagMap.containsKey(item)) {
 
-            return Either.right(nameTagMap.get(item));
+            return nameTagMap.get(item);
         }
 
         CACHE.handle(Data.DATA, entity, mark);
 
-        return Either.left(false);
+        return nameTagMap.get(item);
     }
 
     protected static boolean provide(ItemEntity entity, List<Component> components) {

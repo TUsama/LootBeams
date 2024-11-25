@@ -14,7 +14,7 @@ public class TooltipsModule implements ILBModule {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void renderTooltips(EntityRenderDispatcherHookEvent.RenderLBTooltipsEvent event) {
-        NameTagRenderer.renderNameTag(event.poseStack, event.buffers, event.entity, Minecraft.getInstance().getEntityRenderDispatcher().cameraOrientation());
+        NameTagRenderer.renderNameTag(event.poseStack, event.buffers, event.itemWithRarity);
     }
 
     @Override

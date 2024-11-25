@@ -21,11 +21,11 @@ public class Provider {
 
     public static String getRarity(ItemStack stack) {
         String rarity = stack.getRarity().name().toLowerCase();
-        if (ModList.get().isLoaded("apotheosis")) {
+        /*if (ModList.get().isLoaded("apotheosis")) {
             if (ApotheosisCompat.isApotheosisItem(stack)) {
                 rarity = ApotheosisCompat.getRarityName(stack);
             }
-        }
+        }*/
         rarity = rarity.replace(":", ".").replace("_", ".");
         if (I18n.exists(rarity)) {
             return I18n.get(rarity);
