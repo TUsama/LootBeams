@@ -10,8 +10,8 @@ import com.mojang.datafixers.util.Either;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.StringUtil;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 
@@ -24,13 +24,13 @@ import java.util.stream.Collectors;
 
 public class NameTagCache implements ILBModuleRenderCache<NameTagCache.Data, ItemEntity> {
     private final static NameTagCache CACHE = new NameTagCache();
-    private final static WeakHashMap<ItemStack, List<Component>> nameTagMap = new WeakHashMap<>(500);
+    private final static WeakHashMap<ItemStack, List<String>> nameTagMap = new WeakHashMap<>(500);
     private final static Object lock = new Object();
     private static boolean mark = false;
 
     public final static String langKeyFormat = "lootbeams.fake_rarity.";
 
-    public static Either<Boolean, List<Component>> ask(ItemEntity entity) {
+    public static Either<Boolean, List<String>> ask(ItemEntity entity) {
         ItemStack item = entity.getItem();
 
         if (nameTagMap.containsKey(item)) {
@@ -48,7 +48,7 @@ public class NameTagCache implements ILBModuleRenderCache<NameTagCache.Data, Ite
             return false;
         }
         synchronized (lock) {
-            nameTagMap.put(entity.getItem(), components);
+            nameTagMap.put(entity.getItem(), components.stream().map(x -> StringUtil.stripColor(x.getString())).toList());
         }
         return true;
     }
@@ -59,13 +59,22 @@ public class NameTagCache implements ILBModuleRenderCache<NameTagCache.Data, Ite
             Set<ResourceLocation> customRarity = data.customRarity;
             ItemStack item = itemEntity.getItem();
             Config.TooltipsStatus request = ConfigurationManager.request(Config.ENABLE_TOOLTIPS);
-            Boolean showAmount = ConfigurationManager.request(Config.RENDER_STACKCOUNT);
+            Boolean showAmount = ConfigurationManager.request(Boolean.class, Config.RENDER_STACKCOUNT);
+            Component name = item.getHoverName();
+            if (Boolean.TRUE.equals(showAmount)) {
+                int count = item.getCount();
+                if (count > 1) {
+                    name = name.plainCopy().append(" x" + count);
+                }
+            }
             //request can't be Config.TooltipsStatus.NONE here,
             //because the RenderLBTooltipsEvent will not be fire if request is Config.TooltipsStatus.NONE
-            if (request == Config.TooltipsStatus.NAME_TAG){
-                provide(itemEntity, ImmutableList.of(item.getHoverName()));
+            if (request == Config.TooltipsStatus.ONLY_NAME){
+                provide(itemEntity, ImmutableList.of(name));
 
             } else {
+                Component finalName = name;
+                Component finalName1 = name;
                 item.getTags()
                         .map(x -> Pair.of(customRarity.add(x.location()), x.location()))
                         .filter(x -> !x.getFirst())
@@ -76,12 +85,12 @@ public class NameTagCache implements ILBModuleRenderCache<NameTagCache.Data, Ite
                             String rarity = Location.getPath();
 
                             provide(itemEntity, ImmutableList.of(
-                                    item.getHoverName(),
+                                    finalName,
                                     Component.literal(I18n.exists(langKeyFormat + rarity) ? I18n.get(langKeyFormat + rarity) : rarity)
                             ));
                         }, () -> {
                             //if this item doesn't have a custom rarity, use the built-in rarity checker instead.
-                            provide(itemEntity, ImmutableList.of(item.getHoverName(),
+                            provide(itemEntity, ImmutableList.of(finalName1,
                                     Component.literal(Provider.getRarity(item))));
                         });
             }

@@ -1,7 +1,5 @@
 package com.lootbeams.config;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.List;
 
 public enum Config {
@@ -98,7 +96,8 @@ public enum Config {
 
     public enum TooltipsStatus {
         NONE,
-        NAME_TAG,
-        FULL;
+        ONLY_NAME,
+        NAME_AND_RARITY,
+        NAME_RARITY_TOOLTIPS;
     }
 }

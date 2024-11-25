@@ -6,7 +6,6 @@ import com.lootbeams.config.IConfigurationProvider;
 import com.lootbeams.modules.beam.color.Order;
 import com.lootbeams.modules.tooltip.nametag.NameTagCache;
 import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.fml.common.Mod;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -233,7 +232,7 @@ public class Configuration implements IConfigurationProvider {
 
 		clientBuilder.comment("Item nametags").push("Nametags");
 
-		ENABLE_TOOLTIPS = clientBuilder.comment("If tooltips feature should be enabled.").defineEnum("enable_tooltips", Config.TooltipsStatus.NAME_TAG);
+		ENABLE_TOOLTIPS = clientBuilder.comment("If tooltips feature should be enabled.").defineEnum("enable_tooltips", Config.TooltipsStatus.NAME_AND_RARITY);
 
 
 

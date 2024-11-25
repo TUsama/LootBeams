@@ -57,8 +57,6 @@ public enum LBBuildInColorSource implements IBeamColorSource<Item> {
         boolean useRarity = ConfigurationManager.request(Config.RENDER_RARITY_COLOR);
         val color = itemEntity.getItem().getRarity().getStyleModifier().apply(Style.EMPTY).getColor();
         val hasColor = color != null;
-        System.out.println(useRarity);
-        System.out.println(hasColor);
         if (useRarity && hasColor) {
             return optionalColor.map(x -> new Color(color.getValue()));
         }

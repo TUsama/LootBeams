@@ -81,13 +81,7 @@ public class NameTagRenderer {
 
                 //Render stack counts on nametag
                 Font fontrenderer = Minecraft.getInstance().font;
-                String itemName = StringUtil.stripColor(item.getItem().getHoverName().getString());
-                if (Configuration.RENDER_STACKCOUNT.get()) {
-                    int count = item.getItem().getCount();
-                    if (count > 1) {
-                        itemName = itemName + " x" + count;
-                    }
-                }
+
 
 
                 //Move closer to the player so we dont render in beam, and render the tag
