@@ -21,8 +21,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(EntityRenderDispatcher.class)
 public abstract class EntityRenderDispatcherMixin {
-    @Shadow
-    public abstract Quaternionf cameraOrientation();
+
 
     @Inject(
             method = "render", at = @At(
@@ -33,7 +32,7 @@ public abstract class EntityRenderDispatcherMixin {
     )
     private void lootBeamHook(Entity entity, double worldX, double worldY, double worldZ, float entityYRot, float partialTicks, PoseStack poseStack, MultiBufferSource buffers, int light, CallbackInfo ci) {
         if (!(entity instanceof ItemEntity itemEntity)) return;
-        if (Minecraft.getInstance().player.distanceToSqr(itemEntity) > Math.pow(ConfigurationManager.request(Config.RENDER_DISTANCE), 2)) return;
+        if (Minecraft.getInstance().player.distanceToSqr(itemEntity) > Math.pow(ConfigurationManager.request(Double.class, Config.RENDER_DISTANCE), 2)) return;
         boolean shouldRender = ((Boolean)ConfigurationManager.request(Config.ALL_ITEMS))
                 || (((Boolean) ConfigurationManager.request(Config.ONLY_EQUIPMENT)) && Checker.isEquipmentItem(itemEntity.getItem().getItem()))
                 || (((Boolean)ConfigurationManager.request(Config.ONLY_RARE)) && BeamRenderer.compatRarityCheck(itemEntity, false))
@@ -45,12 +44,14 @@ public abstract class EntityRenderDispatcherMixin {
         if (ConfigurationManager.request(Config.ENABLE_BEAM)){
             EntityRenderDispatcherHookEvent.RenderLootBeamEvent renderLootBeamEvent = new EntityRenderDispatcherHookEvent.RenderLootBeamEvent(itemEntity, worldX, worldY, worldZ, entityYRot, partialTicks, poseStack, buffers, light);
             LBEventBus.INSTANCE.post(renderLootBeamEvent);
+            //should be noticed that the tooltips will only work when beam is enabled.
+            Config.TooltipsStatus request = ConfigurationManager.request(Config.ENABLE_TOOLTIPS);
+            if (request != Config.TooltipsStatus.NONE){
+                EntityRenderDispatcherHookEvent.RenderLBTooltipsEvent renderLBTooltipsEvent = new EntityRenderDispatcherHookEvent.RenderLBTooltipsEvent(itemEntity, worldX, worldY, worldZ, entityYRot, partialTicks, poseStack, buffers, light);
+                LBEventBus.INSTANCE.post(renderLBTooltipsEvent);
+            }
         }
-        Config.TooltipsStatus request = ConfigurationManager.request(Config.ENABLE_TOOLTIPS);
-        if (request != Config.TooltipsStatus.NONE){
-            EntityRenderDispatcherHookEvent.RenderLBTooltipsEvent renderLBTooltipsEvent = new EntityRenderDispatcherHookEvent.RenderLBTooltipsEvent(itemEntity, worldX, worldY, worldZ, entityYRot, partialTicks, poseStack, buffers, light);
-            LBEventBus.INSTANCE.post(renderLBTooltipsEvent);
-        }
+
 
 
     }

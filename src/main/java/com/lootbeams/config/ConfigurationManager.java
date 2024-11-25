@@ -21,7 +21,7 @@ public class ConfigurationManager {
             Object value = connection.get(config).get();
             return (T) value;
         }
-        return null;
+        throw new NullPointerException("can't find this config: " + config);
     }
 
     public static <T> T request(Class<T> clazz, Config config) {
@@ -32,6 +32,6 @@ public class ConfigurationManager {
             return (T) value;
 
         }
-        return null;
+        throw new NullPointerException("can't find this config: " + config);
     }
 }

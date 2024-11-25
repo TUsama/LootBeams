@@ -5,7 +5,7 @@ import com.lootbeams.ModClientEvents;
 import com.lootbeams.compat.ApotheosisCompat;
 import com.lootbeams.config.Config;
 import com.lootbeams.config.ConfigurationManager;
-import com.lootbeams.modules.beam.color.BeamColorCache;
+import com.lootbeams.modules.rarity.RarityCache;
 import com.lootbeams.modules.beam.vfx.VFXParticle;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -39,7 +39,7 @@ public class BeamRenderer {
 
 
 
-        Either<Boolean, Color> ask = BeamColorCache.ask(itemEntity);
+        Either<Boolean, Color> ask = RarityCache.ask(itemEntity);
         if (ask.right().isEmpty()) return;
         Color color = ask.right().get();
         float R = color.getRed() / 255f;

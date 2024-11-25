@@ -38,7 +38,7 @@ public class NameTagCache implements ILBModuleRenderCache<NameTagCache.Data, Ite
             return Either.right(nameTagMap.get(item));
         }
 
-        CACHE.asyncHandle(Data.DATA, entity, mark);
+        CACHE.handle(Data.DATA, entity, mark);
 
         return Either.left(false);
     }

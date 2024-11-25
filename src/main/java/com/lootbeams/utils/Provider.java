@@ -37,9 +37,9 @@ public class Provider {
      * Gets color from the first letter in the text component.
      */
     @Nonnull
-    public static Color getRawColor(Component text) {
+    public static Color getNameColor(Component name) {
         List<Style> list = Lists.newArrayList();
-        text.visit((style, string) -> {
+        name.visit((style, string) -> {
             StringDecomposer.iterateFormatted(string, style, (pPositionInCurrentSequence, style1, pCodePoint) -> {
                 list.add(style);
                 return true;

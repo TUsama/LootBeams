@@ -3,8 +3,7 @@ package com.lootbeams.modules.tooltip.nametag;
 import com.lootbeams.Configuration;
 import com.lootbeams.config.Config;
 import com.lootbeams.config.ConfigurationManager;
-import com.lootbeams.modules.beam.color.BeamColorCache;
-import com.lootbeams.modules.beam.color.IBeamColorSource;
+import com.lootbeams.modules.rarity.RarityCache;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Either;
 import net.minecraft.client.Minecraft;
@@ -12,14 +11,10 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.tags.TagKey;
-import net.minecraft.util.StringUtil;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.joml.Quaternionf;
 
 import java.awt.*;
@@ -32,9 +27,9 @@ public class NameTagRenderer {
 
     public static void renderNameTag(PoseStack stack, MultiBufferSource buffer, ItemEntity item, Quaternionf camera) {
         if (Minecraft.getInstance().player.isCrouching() || ((((Boolean) ConfigurationManager.request(Config.RENDER_NAMETAGS_ONLOOK)) && isLookingAt(Minecraft.getInstance().player, item, Configuration.NAMETAG_LOOK_SENSITIVITY.get())))) {
-            Either<Boolean, Color> ask = BeamColorCache.ask(item);
+            Either<Boolean, Color> ask = RarityCache.ask(item);
             if (ask.right().isEmpty()) return;
-            Color color = ask.right().orElse(IBeamColorSource.DEFAULT);
+            Color color = ask.right().orElse(IBeamOverrideColorSource.DEFAULT);
 /*
             {
                 stack.pushPose();
