@@ -36,9 +36,6 @@ public class BeamRenderer {
 
     public static void renderLootBeam(PoseStack stack, MultiBufferSource buffer, float pticks, ItemWithRarity itemWithRarity, Quaternionf quaternionf) {
         ItemEntity itemEntity = itemWithRarity.item();
-        Item item = itemEntity.getItem().getItem();
-
-
 
 
         Color color = itemWithRarity.rarity().getColor();
