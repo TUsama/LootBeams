@@ -5,6 +5,7 @@ import com.lootbeams.config.Config;
 import com.lootbeams.config.ConfigurationManager;
 import com.lootbeams.modules.ILBModulePersistentData;
 import com.lootbeams.modules.ILBModuleRenderCache;
+import com.lootbeams.modules.rarity.ItemWithRarity;
 import com.lootbeams.utils.Provider;
 import com.mojang.datafixers.util.Either;
 import com.mojang.datafixers.util.Pair;
@@ -14,6 +15,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.StringUtil;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 import java.util.Objects;
@@ -22,7 +24,7 @@ import java.util.WeakHashMap;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
-public class NameTagCache implements ILBModuleRenderCache<NameTagCache.Data, ItemEntity> {
+public class NameTagCache implements ILBModuleRenderCache<NameTagCache.Data, ItemWithRarity> {
     private final static NameTagCache CACHE = new NameTagCache();
     private final static WeakHashMap<ItemStack, List<String>> nameTagMap = new WeakHashMap<>(500);
     private final static Object lock = new Object();
@@ -30,34 +32,35 @@ public class NameTagCache implements ILBModuleRenderCache<NameTagCache.Data, Ite
 
     public final static String langKeyFormat = "lootbeams.fake_rarity.";
 
-    public static List<String> ask(ItemEntity entity) {
-        ItemStack item = entity.getItem();
+    public static List<String> ask(ItemWithRarity itemWithRarity) {
+        ItemStack item = itemWithRarity.item().getItem();
 
         if (nameTagMap.containsKey(item)) {
 
             return nameTagMap.get(item);
         }
 
-        CACHE.handle(Data.DATA, entity, mark);
+        CACHE.handle(Data.DATA, itemWithRarity, mark);
 
         return nameTagMap.get(item);
     }
 
-    protected static boolean provide(ItemEntity entity, List<Component> components) {
-        if (nameTagMap.containsKey(entity.getItem())) {
+    protected static boolean provide(ItemWithRarity itemWithRarity, List<Component> components) {
+        ItemStack item = itemWithRarity.item().getItem();
+        if (nameTagMap.containsKey(item)) {
             return false;
         }
         synchronized (lock) {
-            nameTagMap.put(entity.getItem(), components.stream().map(x -> StringUtil.stripColor(x.getString())).toList());
+            nameTagMap.put(item, components.stream().map(x -> StringUtil.stripColor(x.getString())).toList());
         }
         return true;
     }
 
     @Override
-    public BiConsumer<Data, ItemEntity> getDataHandler() {
-        return ((data, itemEntity) -> {
+    public BiConsumer<Data, ItemWithRarity> getDataHandler() {
+        return ((data, itemWithRarity) -> {
             Set<ResourceLocation> customRarity = data.customRarity;
-            ItemStack item = itemEntity.getItem();
+            ItemStack item = itemWithRarity.item().getItem();
             Config.TooltipsStatus request = ConfigurationManager.request(Config.ENABLE_TOOLTIPS);
             Boolean showAmount = ConfigurationManager.request(Boolean.class, Config.RENDER_STACKCOUNT);
             Component name = item.getHoverName();
@@ -70,28 +73,33 @@ public class NameTagCache implements ILBModuleRenderCache<NameTagCache.Data, Ite
             //request can't be Config.TooltipsStatus.NONE here,
             //because the RenderLBTooltipsEvent will not be fire if request is Config.TooltipsStatus.NONE
             if (request == Config.TooltipsStatus.ONLY_NAME){
-                provide(itemEntity, ImmutableList.of(name));
+                provide(itemWithRarity, ImmutableList.of(name));
 
             } else {
+
                 Component finalName = name;
-                Component finalName1 = name;
                 item.getTags()
-                        .map(x -> Pair.of(customRarity.add(x.location()), x.location()))
-                        .filter(x -> !x.getFirst())
+                        //this is not good but it fit the style of functional programing
+                        .filter(x -> !customRarity.isEmpty())
+                        .map(x -> Pair.of(customRarity.contains(x.location()), x.location()))
+                        .filter(Pair::getFirst)
                         .findFirst()
                         .ifPresentOrElse(x -> {
                             //provide custom rarity
                             ResourceLocation Location = x.getSecond();
                             String rarity = Location.getPath();
+                            System.out.printf("In custom rarity, the output is %s %s%n", finalName,                                     Component.literal(I18n.exists(langKeyFormat + rarity) ? I18n.get(langKeyFormat + rarity) : rarity));
 
-                            provide(itemEntity, ImmutableList.of(
+                            provide(itemWithRarity, ImmutableList.of(
                                     finalName,
                                     Component.literal(I18n.exists(langKeyFormat + rarity) ? I18n.get(langKeyFormat + rarity) : rarity)
                             ));
                         }, () -> {
                             //if this item doesn't have a custom rarity, use the built-in rarity checker instead.
-                            provide(itemEntity, ImmutableList.of(finalName1,
-                                    Component.literal(Provider.getRarity(item))));
+
+
+                            provide(itemWithRarity, ImmutableList.of(finalName,
+                                    Component.literal(StringUtils.capitalize(itemWithRarity.rarity().getName().toLowerCase()))));
                         });
             }
             mark = true;

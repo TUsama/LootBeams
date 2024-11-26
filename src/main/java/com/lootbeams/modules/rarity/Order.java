@@ -1,7 +1,6 @@
 package com.lootbeams.modules.rarity;
 
-import com.lootbeams.modules.rarity.impl.LBOverridedRarity;
-import com.mojang.datafixers.util.Either;
+import com.lootbeams.modules.rarity.impl.LBOverridableRarity;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -20,7 +19,7 @@ public enum Order {
             if (resourceLocation == null) continue;
             Item registryItem = ForgeRegistries.ITEMS.getValue(resourceLocation);
             if (registryItem != null && registryItem.asItem() == itemWithRarity.item().getItem().getItem()) {
-                return Either.to(LBOverridedRarity.from(itemWithRarity.rarity()));
+                return itemWithRarity.to(LBOverridableRarity.from(itemWithRarity.rarity()));
             }
         }
         return itemWithRarity;
@@ -30,7 +29,7 @@ public enum Order {
             ResourceLocation resourceLocation = ResourceLocation.tryParse(stringColorPair.getFirst());
             if (resourceLocation == null) continue;
             if (ForgeRegistries.ITEMS.tags().getTag(TagKey.create(BuiltInRegistries.ITEM.key(), resourceLocation)).contains(itemWithRarity.item().getItem().getItem())) {
-                return itemWithRarity.to(LBOverridedRarity.from(itemWithRarity.rarity()));
+                return itemWithRarity.to(LBOverridableRarity.from(itemWithRarity.rarity()));
             }
         }
         return itemWithRarity;
@@ -38,7 +37,7 @@ public enum Order {
     MODID((list, itemWithRarity) ->{
         for (Pair<String, Color> stringColorPair : list) {
             if (ForgeRegistries.ITEMS.getKey(itemWithRarity.item().getItem().getItem()).getNamespace().equals(stringColorPair.getFirst())) {
-                return itemWithRarity.to(LBOverridedRarity.from(itemWithRarity.rarity()));
+                return itemWithRarity.to(LBOverridableRarity.from(itemWithRarity.rarity()));
             }
         }
         return itemWithRarity;

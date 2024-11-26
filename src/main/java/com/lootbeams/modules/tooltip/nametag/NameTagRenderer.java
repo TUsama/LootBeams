@@ -20,6 +20,7 @@ import org.joml.Quaternionf;
 
 import java.awt.*;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -78,11 +79,16 @@ public class NameTagRenderer {
                 //Render stack counts on nametag
                 Font fontrenderer = Minecraft.getInstance().font;
 
-                List<String> ask = NameTagCache.ask(item);
+                List<String> ask = NameTagCache.ask(itemWithRarity);
+                if (ask == null ) return;
                 stack.translate(0, 0, -10);
-                for (String s : ask) {
-                    renderText(fontrenderer, stack, buffer, s, foregroundColor, backgroundColor, backgroundAlpha);
+                ListIterator<String> stringListIterator = ask.listIterator();
+                while (stringListIterator.hasNext()){
+                    String next = stringListIterator.next();
+                    renderText(fontrenderer, stack, buffer, next, foregroundColor, backgroundColor, backgroundAlpha);
+                    stack.translate(0, Minecraft.getInstance().font.lineHeight, 0.0f);
                 }
+
                 stack.popPose();
                 //Move closer to the player so we dont render in beam, and render the tag
 
@@ -115,6 +121,8 @@ public class NameTagRenderer {
             fontRenderer.drawInBatch(text, (float) (-fontRenderer.width(text) / 2), 0f, foregroundColor, false, stack.last().pose(), buffer, Font.DisplayMode.NORMAL, backgroundColor, 15728864);
         }
     }
+
+
 
     /**
      * Checks if the player is looking at the given entity, accuracy determines how close the player has to look.

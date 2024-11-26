@@ -24,7 +24,10 @@ public class LBRarityContainer implements ILBModulePersistentData {
         while (iterator.hasNext()){
             ILBRarity next = iterator.next();
             boolean thisRarity = next.isThisRarity(entity);
-            if (thisRarity) return next;
+            if (thisRarity) {
+                System.out.printf("item is %s, rarity is %s%n", entity, next);
+                return next;
+            }
         }
         return DEFAULT;
     }
