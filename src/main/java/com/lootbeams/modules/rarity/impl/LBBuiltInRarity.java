@@ -1,9 +1,12 @@
 package com.lootbeams.modules.rarity.impl;
 
 import com.lootbeams.modules.rarity.ILBRarity;
+import com.lootbeams.modules.rarity.ILBRarityApplier;
+import com.lootbeams.modules.rarity.ItemWithRarity;
+import io.vavr.control.Option;
 import net.minecraft.network.chat.Style;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Rarity;
+import org.apache.commons.lang3.StringUtils;
 
 import java.awt.*;
 //It's not a good idea to change the vanilla rarity color.
@@ -24,7 +27,7 @@ public enum LBBuiltInRarity implements ILBRarity {
 
     @Override
     public String getName() {
-        return toString();
+        return StringUtils.capitalize(rarity.name().toLowerCase());
     }
 
     @Override
@@ -36,7 +39,13 @@ public enum LBBuiltInRarity implements ILBRarity {
 
 
     @Override
-    public boolean isThisRarity(ItemEntity itemEntity) {
-        return itemEntity.getItem().getRarity().equals(this.rarity);
+    public ILBRarityApplier getApplier() {
+        return itemEntity1 -> {
+            if (itemEntity1.getItem().getRarity().equals(this.rarity)) {
+                return Option.some(ItemWithRarity.of(itemEntity1, this));
+            } else {
+                return Option.none();
+            }
+        };
     }
 }

@@ -1,7 +1,6 @@
 package com.lootbeams.modules.rarity;
 
 import com.lootbeams.modules.ILBModuleRenderCache;
-import com.mojang.datafixers.util.Either;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 
@@ -41,8 +40,8 @@ public class RarityCache implements ILBModuleRenderCache<LBRarityContainer, Item
     @Override
     public BiConsumer<LBRarityContainer, ItemEntity> getDataHandler() {
         return ((lbRarityContainer, itemEntity) -> {
-            ILBRarity itemRarity = LBRarityContainer.getItemRarity(itemEntity);
-            ItemWithRarity itemWithRarity = ConfigColorOverride.tryGetConfigRarity(ItemWithRarity.of(itemEntity, itemRarity));
+            ItemWithRarity itemRarity = LBRarityContainer.getItemWithRarity(itemEntity);
+            ItemWithRarity itemWithRarity = ConfigColorOverride.tryGetConfigRarity(itemRarity);
             provide(itemEntity, new SoftReference<>(itemWithRarity));
             mark = false;
         });

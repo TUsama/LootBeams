@@ -1,14 +1,12 @@
 package com.lootbeams.utils;
 
 import com.google.common.collect.Lists;
-import com.lootbeams.compat.ApotheosisCompat;
 import lombok.experimental.UtilityClass;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.util.StringDecomposer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.fml.ModList;
 
 import javax.annotation.Nonnull;
 import java.awt.*;

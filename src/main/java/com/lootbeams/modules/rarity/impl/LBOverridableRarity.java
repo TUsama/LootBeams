@@ -1,7 +1,7 @@
 package com.lootbeams.modules.rarity.impl;
 
 import com.lootbeams.modules.rarity.ILBRarity;
-import net.minecraft.world.entity.item.ItemEntity;
+import com.lootbeams.modules.rarity.ILBRarityApplier;
 
 import java.awt.*;
 
@@ -34,8 +34,8 @@ public class LBOverridableRarity implements ILBRarity {
     }
 
     @Override
-    public boolean isThisRarity(ItemEntity itemEntity) {
-        return false;
+    public ILBRarityApplier getApplier() {
+        return null;
     }
 
 

@@ -1,6 +1,5 @@
-package com.lootbeams.compat;
+package com.lootbeams.modules.compat.apothesis;
 
-import dev.shadowsoffire.apotheosis.adventure.AdventureModule;
 import dev.shadowsoffire.apotheosis.adventure.affix.AffixHelper;
 import dev.shadowsoffire.apotheosis.adventure.affix.salvaging.SalvageItem;
 import dev.shadowsoffire.apotheosis.adventure.loot.LootRarity;

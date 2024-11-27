@@ -51,7 +51,7 @@ public class NameTagCache implements ILBModuleRenderCache<NameTagCache.Data, Ite
             return false;
         }
         synchronized (lock) {
-            nameTagMap.put(item, components.stream().map(x -> StringUtil.stripColor(x.getString())).toList());
+            nameTagMap.put(item, components.stream().map(Component::getString).toList());
         }
         return true;
     }
@@ -73,7 +73,7 @@ public class NameTagCache implements ILBModuleRenderCache<NameTagCache.Data, Ite
             //request can't be Config.TooltipsStatus.NONE here,
             //because the RenderLBTooltipsEvent will not be fire if request is Config.TooltipsStatus.NONE
             if (request == Config.TooltipsStatus.ONLY_NAME){
-                provide(itemWithRarity, ImmutableList.of(name));
+                provide(itemWithRarity, List.of(name));
 
             } else {
 
@@ -90,7 +90,7 @@ public class NameTagCache implements ILBModuleRenderCache<NameTagCache.Data, Ite
                             String rarity = Location.getPath();
                             System.out.printf("In custom rarity, the output is %s %s%n", finalName,                                     Component.literal(I18n.exists(langKeyFormat + rarity) ? I18n.get(langKeyFormat + rarity) : rarity));
 
-                            provide(itemWithRarity, ImmutableList.of(
+                            provide(itemWithRarity, List.of(
                                     finalName,
                                     Component.literal(I18n.exists(langKeyFormat + rarity) ? I18n.get(langKeyFormat + rarity) : rarity)
                             ));
@@ -98,7 +98,7 @@ public class NameTagCache implements ILBModuleRenderCache<NameTagCache.Data, Ite
                             //if this item doesn't have a custom rarity, use the built-in rarity checker instead.
 
 
-                            provide(itemWithRarity, ImmutableList.of(finalName,
+                            provide(itemWithRarity, List.of(finalName,
                                     Component.literal(StringUtils.capitalize(itemWithRarity.rarity().getName().toLowerCase()))));
                         });
             }

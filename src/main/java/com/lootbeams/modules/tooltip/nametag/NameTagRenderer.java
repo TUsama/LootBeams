@@ -81,14 +81,16 @@ public class NameTagRenderer {
 
                 List<String> ask = NameTagCache.ask(itemWithRarity);
                 if (ask == null ) return;
-                stack.translate(0, 0, -10);
-                ListIterator<String> stringListIterator = ask.listIterator();
-                while (stringListIterator.hasNext()){
-                    String next = stringListIterator.next();
-                    renderText(fontrenderer, stack, buffer, next, foregroundColor, backgroundColor, backgroundAlpha);
-                    stack.translate(0, Minecraft.getInstance().font.lineHeight, 0.0f);
-                }
 
+                //System.out.println(backgroundColor);
+                stack.translate(0, 0, -10);
+                ask.stream()
+                        .filter(String::isBlank)
+                        .forEach(x -> {
+
+                            renderText(fontrenderer, stack, buffer, x, foregroundColor, backgroundColor, backgroundAlpha);
+                            stack.translate(0, Minecraft.getInstance().font.lineHeight, 0.0f);
+                        });
                 stack.popPose();
                 //Move closer to the player so we dont render in beam, and render the tag
 
