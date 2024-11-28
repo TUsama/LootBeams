@@ -1,11 +1,11 @@
 package com.lootbeams.modules.beam;
 
 import com.lootbeams.Configuration;
-import com.lootbeams.ModClientEvents;
+import com.lootbeams.LootBeamsClient;
 import com.lootbeams.modules.compat.apothesis.ApotheosisCompat;
 import com.lootbeams.config.Config;
 import com.lootbeams.config.ConfigurationManager;
-import com.lootbeams.modules.rarity.ItemWithRarity;
+import com.lootbeams.data.LBItemEntity;
 import com.lootbeams.modules.beam.vfx.VFXParticle;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -31,11 +31,11 @@ public class BeamRenderer {
     private static final Random RANDOM = new Random();
 
 
-    public static void renderLootBeam(PoseStack stack, MultiBufferSource buffer, float pticks, ItemWithRarity itemWithRarity, Quaternionf quaternionf) {
-        ItemEntity itemEntity = itemWithRarity.item();
+    public static void renderLootBeam(PoseStack stack, MultiBufferSource buffer, float pticks, LBItemEntity LBItemEntity, Quaternionf quaternionf) {
+        ItemEntity itemEntity = LBItemEntity.item();
 
 
-        Color color = itemWithRarity.rarity().color();
+        Color color = LBItemEntity.rarity().color();
         float R = color.getRed() / 255f;
         float G = color.getGreen() / 255f;
         float B = color.getBlue() / 255f;
@@ -179,7 +179,7 @@ public class BeamRenderer {
                     Configuration.PARTICLE_DIRECTION_Y.get(),
                     Configuration.PARTICLE_DIRECTION_Z.get()
             ).multiply(randomDir);
-            addParticle(ModClientEvents.GLOW_TEXTURE, r, g, b, 1.0f, Configuration.PARTICLE_LIFETIME.get(), RANDOM.nextFloat((float) (0.25f * Configuration.PARTICLE_SIZE.get()), (float) (1.1f * Configuration.PARTICLE_SIZE.get())), new Vec3(
+            addParticle(LootBeamsClient.GLOW_TEXTURE, r, g, b, 1.0f, Configuration.PARTICLE_LIFETIME.get(), RANDOM.nextFloat((float) (0.25f * Configuration.PARTICLE_SIZE.get()), (float) (1.1f * Configuration.PARTICLE_SIZE.get())), new Vec3(
                     RANDOM.nextDouble(item.getX() - Configuration.PARTICLE_RADIUS.get(), item.getX() + Configuration.PARTICLE_RADIUS.get()),
                     RANDOM.nextDouble(item.getY() - (Configuration.PARTICLE_RADIUS.get() / 3f), item.getY() + (Configuration.PARTICLE_RADIUS.get() / 3f)),
                     RANDOM.nextDouble(item.getZ() - Configuration.PARTICLE_RADIUS.get(), item.getZ() + Configuration.PARTICLE_RADIUS.get())), particleDir, item.position());

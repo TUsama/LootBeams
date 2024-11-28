@@ -3,7 +3,7 @@ package com.lootbeams;
 import com.lootbeams.config.Config;
 import com.lootbeams.config.ConfigurationManager;
 import com.lootbeams.config.IConfigurationProvider;
-import com.lootbeams.modules.rarity.Order;
+import com.lootbeams.data.rarity.Order;
 import com.lootbeams.modules.tooltip.nametag.NameTagCache;
 import net.minecraftforge.common.ForgeConfigSpec;
 

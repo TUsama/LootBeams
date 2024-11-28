@@ -5,8 +5,8 @@ import com.lootbeams.config.Config;
 import com.lootbeams.config.ConfigurationManager;
 import com.lootbeams.events.EntityRenderDispatcherHookEvent;
 import com.lootbeams.modules.beam.BeamRenderer;
-import com.lootbeams.modules.rarity.ItemWithRarity;
-import com.lootbeams.modules.rarity.RarityCache;
+import com.lootbeams.data.LBItemEntity;
+import com.lootbeams.data.LBItemEntityCache;
 import com.lootbeams.utils.Checker;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
@@ -20,6 +20,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.lang.ref.SoftReference;
+import java.lang.ref.WeakReference;
 
 @Mixin(EntityRenderDispatcher.class)
 public abstract class EntityRenderDispatcherMixin {
@@ -46,16 +47,16 @@ public abstract class EntityRenderDispatcherMixin {
             return;
 
         if (ConfigurationManager.request(Config.ENABLE_BEAM)) {
-            SoftReference<ItemWithRarity> ask = RarityCache.ask(itemEntity);
-            ItemWithRarity itemWithRarity = ask.get();
-            if (itemWithRarity == null) return;
+            SoftReference<LBItemEntity> ask = LBItemEntityCache.ask(itemEntity);
+            LBItemEntity LBItemEntity = ask.get();
+            if (LBItemEntity == null) return;
 
-            EntityRenderDispatcherHookEvent.RenderLootBeamEvent renderLootBeamEvent = new EntityRenderDispatcherHookEvent.RenderLootBeamEvent(itemWithRarity, worldX, worldY, worldZ, entityYRot, partialTicks, poseStack, buffers, light);
+            EntityRenderDispatcherHookEvent.RenderLootBeamEvent renderLootBeamEvent = new EntityRenderDispatcherHookEvent.RenderLootBeamEvent(LBItemEntity, worldX, worldY, worldZ, entityYRot, partialTicks, poseStack, buffers, light);
             LootBeams.EVENT_BUS.post(renderLootBeamEvent);
             //should be noticed that the tooltips will only work when beam is enabled.
             Config.TooltipsStatus request = ConfigurationManager.request(Config.ENABLE_TOOLTIPS);
             if (request != Config.TooltipsStatus.NONE) {
-                EntityRenderDispatcherHookEvent.RenderLBTooltipsEvent renderLBTooltipsEvent = new EntityRenderDispatcherHookEvent.RenderLBTooltipsEvent(itemWithRarity, worldX, worldY, worldZ, entityYRot, partialTicks, poseStack, buffers, light);
+                EntityRenderDispatcherHookEvent.RenderLBTooltipsEvent renderLBTooltipsEvent = new EntityRenderDispatcherHookEvent.RenderLBTooltipsEvent(LBItemEntity, worldX, worldY, worldZ, entityYRot, partialTicks, poseStack, buffers, light);
                 LootBeams.EVENT_BUS.post(renderLBTooltipsEvent);
             }
         }

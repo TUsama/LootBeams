@@ -13,7 +13,7 @@ public class TooltipsModule implements ILBModule {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void renderTooltips(EntityRenderDispatcherHookEvent.RenderLBTooltipsEvent event) {
-        NameTagRenderer.renderNameTag(event.poseStack, event.buffers, event.itemWithRarity);
+        NameTagRenderer.renderNameTag(event.poseStack, event.buffers, event.LBItemEntity);
     }
 
     @Override

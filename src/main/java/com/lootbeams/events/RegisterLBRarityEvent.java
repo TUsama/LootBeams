@@ -1,6 +1,6 @@
 package com.lootbeams.events;
 
-import com.lootbeams.modules.rarity.ILBRarityApplier;
+import com.lootbeams.data.rarity.ILBRarityApplier;
 import lombok.Getter;
 import net.neoforged.bus.api.Event;
 

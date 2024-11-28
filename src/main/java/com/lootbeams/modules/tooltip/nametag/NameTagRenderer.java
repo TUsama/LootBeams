@@ -3,8 +3,11 @@ package com.lootbeams.modules.tooltip.nametag;
 import com.lootbeams.Configuration;
 import com.lootbeams.config.Config;
 import com.lootbeams.config.ConfigurationManager;
-import com.lootbeams.modules.rarity.ItemWithRarity;
+import com.lootbeams.data.LBItemEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
+import dev.shadowsoffire.apotheosis.adventure.loot.LootRarity;
+import dev.shadowsoffire.apotheosis.adventure.socket.gem.GemInstance;
+import dev.shadowsoffire.placebo.reload.DynamicHolder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.player.LocalPlayer;
@@ -23,11 +26,14 @@ import java.util.concurrent.ConcurrentHashMap;
 public class NameTagRenderer {
     public static final Map<ItemEntity, List<Component>> TOOLTIP_CACHE = new ConcurrentHashMap<>();
 
-    public static void renderNameTag(PoseStack stack, MultiBufferSource buffer, ItemWithRarity itemWithRarity) {
-        ItemEntity item = itemWithRarity.item();
+    public static void renderNameTag(PoseStack stack, MultiBufferSource buffer, LBItemEntity LBItemEntity) {
+        ItemEntity item = LBItemEntity.item();
+
+        DynamicHolder<LootRarity> rarity = GemInstance.unsocketed(item.getItem()).rarity();
+        //System.out.println(rarity.isBound());
         if (Minecraft.getInstance().player.isCrouching() || ((((Boolean) ConfigurationManager.request(Config.RENDER_NAMETAGS_ONLOOK)) && isLookingAt(Minecraft.getInstance().player, item, Configuration.NAMETAG_LOOK_SENSITIVITY.get())))) {
 
-            Color color = itemWithRarity.rarity().color();
+            Color color = LBItemEntity.rarity().color();
             int rgb = color.getRGB();
 /*
             {
@@ -75,7 +81,7 @@ public class NameTagRenderer {
                 //Render stack counts on nametag
                 Font fontrenderer = Minecraft.getInstance().font;
 
-                List<Component> ask = NameTagCache.ask(itemWithRarity);
+                List<Component> ask = NameTagCache.ask(LBItemEntity);
                 if (ask == null) return;
 
 

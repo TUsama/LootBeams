@@ -1,12 +1,12 @@
-package com.lootbeams.modules.rarity;
+package com.lootbeams.data.rarity;
 
 import com.google.common.collect.ImmutableMap;
 import com.lootbeams.LootBeams;
 import com.lootbeams.config.Config;
 import com.lootbeams.config.ConfigurationManager;
+import com.lootbeams.data.LBItemEntity;
 import com.lootbeams.utils.Attempt;
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.world.item.Item;
 
 import java.awt.*;
 import java.util.Arrays;
@@ -42,7 +42,7 @@ public class ConfigColorOverride {
         }
     }
 
-    public static ItemWithRarity tryGetConfigRarity(ItemWithRarity itemWithRarity) {
+    public static LBItemEntity tryGetConfigRarity(LBItemEntity LBItemEntity) {
 
         List<String> overrides = ConfigurationManager.request(Config.COLOR_OVERRIDES);
         List<String> order = ConfigurationManager.request(Config.COLOR_APPLY_ORDER);
@@ -52,12 +52,12 @@ public class ConfigColorOverride {
                     .filter(x -> !list.contains(x))
                     .map(Order::valueOf)
                     .filter(order1 -> configMap.get(order1) != null)
-                    .map(order1 -> order1.mutate.apply(configMap.get(order1), itemWithRarity))
+                    .map(order1 -> order1.mutate.apply(configMap.get(order1), LBItemEntity))
                     .findFirst()
-                    .orElse(itemWithRarity);
+                    .orElse(LBItemEntity);
 
 
         }
-        return itemWithRarity;
+        return LBItemEntity;
     }
 }

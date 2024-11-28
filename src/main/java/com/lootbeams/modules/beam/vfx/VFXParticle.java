@@ -2,14 +2,17 @@ package com.lootbeams.modules.beam.vfx;
 
 import com.lootbeams.ClientSetup;
 import com.lootbeams.Configuration;
-import com.lootbeams.LootBeams;
 import com.lootbeams.LootBeamsParticleRenderType;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.*;
 import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.client.renderer.RenderStateShard;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor;
@@ -62,6 +65,10 @@ public class VFXParticle extends TextureSheetParticle {
 
     Trail trail;
 
+    public static RenderType translucentNoCull(ResourceLocation texture) {
+        return RenderType.create("lootbeams_translucent", DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 256, false, true, RenderType.CompositeState.builder().setTextureState(new RenderStateShard.TextureStateShard(texture, false, false)).setShaderState(RenderStateShard.RENDERTYPE_ENTITY_TRANSLUCENT_EMISSIVE_SHADER).setWriteMaskState(RenderStateShard.COLOR_WRITE).setCullState(RenderStateShard.NO_CULL).setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY).createCompositeState(false));
+    }
+
     @Override
     public boolean shouldCull() {
         return hasTrail;
@@ -107,7 +114,7 @@ public class VFXParticle extends TextureSheetParticle {
             ClientSetup.delayedRenders.add(ps -> {
                 trail.pushPoint(new Vec3(lX, lY, lZ));
                 trail.setColor(this.rCol, this.gCol, this.bCol, this.alpha);
-                trail.render(ps, Minecraft.getInstance().renderBuffers().bufferSource().getBuffer(LootBeams.translucentNoCull(TEXTURE)), j);
+                trail.render(ps, Minecraft.getInstance().renderBuffers().bufferSource().getBuffer(translucentNoCull(TEXTURE)), j);
             });
         }
     }

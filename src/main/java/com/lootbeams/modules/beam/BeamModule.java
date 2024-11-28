@@ -13,7 +13,7 @@ public class BeamModule implements ILBModule {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onEnableModule(EntityRenderDispatcherHookEvent.RenderLootBeamEvent event) {
-        BeamRenderer.renderLootBeam(event.poseStack, event.buffers, event.partialTicks, event.itemWithRarity, Minecraft.getInstance().getEntityRenderDispatcher().cameraOrientation());
+        BeamRenderer.renderLootBeam(event.poseStack, event.buffers, event.partialTicks, event.LBItemEntity, Minecraft.getInstance().getEntityRenderDispatcher().cameraOrientation());
     }
 
 

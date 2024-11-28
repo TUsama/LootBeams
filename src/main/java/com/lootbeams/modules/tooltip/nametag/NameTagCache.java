@@ -1,21 +1,15 @@
 package com.lootbeams.modules.tooltip.nametag;
 
-import com.google.common.collect.ImmutableList;
 import com.lootbeams.config.Config;
 import com.lootbeams.config.ConfigurationManager;
 import com.lootbeams.modules.ILBModulePersistentData;
 import com.lootbeams.modules.ILBModuleRenderCache;
-import com.lootbeams.modules.rarity.ItemWithRarity;
-import com.lootbeams.utils.Provider;
-import com.mojang.datafixers.util.Either;
+import com.lootbeams.data.LBItemEntity;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.StringUtil;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 import java.util.Objects;
@@ -24,7 +18,7 @@ import java.util.WeakHashMap;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
-public class NameTagCache implements ILBModuleRenderCache<NameTagCache.Data, ItemWithRarity> {
+public class NameTagCache implements ILBModuleRenderCache<NameTagCache.Data, LBItemEntity> {
     private final static NameTagCache CACHE = new NameTagCache();
     private final static WeakHashMap<ItemStack, List<Component>> nameTagMap = new WeakHashMap<>(500);
     private final static Object lock = new Object();
@@ -32,21 +26,21 @@ public class NameTagCache implements ILBModuleRenderCache<NameTagCache.Data, Ite
 
     public final static String langKeyFormat = "lootbeams.fake_rarity.";
 
-    public static List<Component> ask(ItemWithRarity itemWithRarity) {
-        ItemStack item = itemWithRarity.item().getItem();
+    public static List<Component> ask(LBItemEntity LBItemEntity) {
+        ItemStack item = LBItemEntity.item().getItem();
 
         if (nameTagMap.containsKey(item)) {
 
             return nameTagMap.get(item);
         }
 
-        CACHE.handle(Data.DATA, itemWithRarity, mark);
+        CACHE.handle(Data.DATA, LBItemEntity, mark);
 
         return nameTagMap.get(item);
     }
 
-    protected static boolean provide(ItemWithRarity itemWithRarity, List<Component> components) {
-        ItemStack item = itemWithRarity.item().getItem();
+    protected static boolean provide(LBItemEntity LBItemEntity, List<Component> components) {
+        ItemStack item = LBItemEntity.item().getItem();
         if (nameTagMap.containsKey(item)) {
             return false;
         }
@@ -57,7 +51,7 @@ public class NameTagCache implements ILBModuleRenderCache<NameTagCache.Data, Ite
     }
 
     @Override
-    public BiConsumer<Data, ItemWithRarity> getDataHandler() {
+    public BiConsumer<Data, LBItemEntity> getDataHandler() {
         return ((data, itemWithRarity) -> {
             Set<ResourceLocation> customRarity = data.customRarity;
             ItemStack item = itemWithRarity.item().getItem();

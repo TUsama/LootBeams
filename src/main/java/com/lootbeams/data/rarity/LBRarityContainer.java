@@ -1,6 +1,7 @@
-package com.lootbeams.modules.rarity;
+package com.lootbeams.data.rarity;
 
 import com.lootbeams.LootBeams;
+import com.lootbeams.data.LBItemEntity;
 import com.lootbeams.events.RegisterLBRarityEvent;
 import com.lootbeams.modules.ILBModulePersistentData;
 import io.vavr.control.Option;
@@ -18,23 +19,22 @@ public class LBRarityContainer implements ILBModulePersistentData {
     }
 
 
-    public static ItemWithRarity getItemWithRarity(ItemEntity entity){
+    public static LBItemEntity getItemWithRarity(ItemEntity entity){
         Iterator<ILBRarityApplier> iterator = sources.iterator();
         while (iterator.hasNext()){
             ILBRarityApplier next = iterator.next();
-            Option<ItemWithRarity> apply = next.apply(entity);
+            Option<LBItemEntity> apply = next.apply(entity);
             if (!apply.isEmpty()) {
-                System.out.printf("item is %s, rarity is %s%n", entity, apply.get());
                 return apply.get();
             }
         }
-        return ItemWithRarity.of(entity, LBRarity.of(Rarity.COMMON));
+        return LBItemEntity.of(entity, LBRarity.of(Rarity.COMMON));
     }
 
     @Override
     public void initData() {
         //vanilla rarity transform
-        sources.add(itemEntity -> Option.some(ItemWithRarity.of(itemEntity, LBRarity.of(itemEntity.getItem().getRarity()))));
+        sources.add(itemEntity -> Option.some(LBItemEntity.of(itemEntity, LBRarity.of(itemEntity.getItem().getRarity()))));
         ArrayList<ILBRarityApplier> appliers = new ArrayList<>();
         LootBeams.EVENT_BUS.post(new RegisterLBRarityEvent.Pre(appliers));
         LootBeams.EVENT_BUS.post(new RegisterLBRarityEvent.Post(appliers));

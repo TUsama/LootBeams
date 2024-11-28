@@ -20,10 +20,11 @@ public class Checker {
         }
 
         for (String id : registryNames.stream().filter(s -> !s.isEmpty()).toList()) {
+            //modid
             if (!id.contains(":") && ForgeRegistries.ITEMS.getKey(item).getNamespace().equals(id)) {
                 return true;
             }
-
+            //RL
             ResourceLocation itemResource = ResourceLocation.tryParse(id);
             if (itemResource != null && ForgeRegistries.ITEMS.getValue(itemResource).asItem() == item.asItem()) {
                 return true;
