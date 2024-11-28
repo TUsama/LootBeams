@@ -1,11 +1,11 @@
 package com.lootbeams.modules.rarity;
 
-import com.lootbeams.events.LBEventBus;
+import com.lootbeams.LootBeams;
 import com.lootbeams.events.RegisterLBRarityEvent;
 import com.lootbeams.modules.ILBModulePersistentData;
-import com.lootbeams.modules.rarity.impl.LBBuiltInRarity;
 import io.vavr.control.Option;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.Rarity;
 
 import java.util.*;
 
@@ -28,17 +28,18 @@ public class LBRarityContainer implements ILBModulePersistentData {
                 return apply.get();
             }
         }
-        return ItemWithRarity.of(entity, LBBuiltInRarity.COMMON);
+        return ItemWithRarity.of(entity, LBRarity.of(Rarity.COMMON));
     }
 
     @Override
     public void initData() {
-        sources.addAll(Arrays.stream(LBBuiltInRarity.values()).map(LBBuiltInRarity::getApplier).toList());
-        ArrayList<ILBRarityApplier> outsideRarity = new ArrayList<>();
-        LBEventBus.INSTANCE.post(new RegisterLBRarityEvent.Pre(outsideRarity));
-        LBEventBus.INSTANCE.post(new RegisterLBRarityEvent.Post(outsideRarity));
-        if (!outsideRarity.isEmpty()) {
-            ListIterator<ILBRarityApplier> outsiders = outsideRarity.listIterator(outsideRarity.size());
+        //vanilla rarity transform
+        sources.add(itemEntity -> Option.some(ItemWithRarity.of(itemEntity, LBRarity.of(itemEntity.getItem().getRarity()))));
+        ArrayList<ILBRarityApplier> appliers = new ArrayList<>();
+        LootBeams.EVENT_BUS.post(new RegisterLBRarityEvent.Pre(appliers));
+        LootBeams.EVENT_BUS.post(new RegisterLBRarityEvent.Post(appliers));
+        if (!appliers.isEmpty()) {
+            ListIterator<ILBRarityApplier> outsiders = appliers.listIterator(appliers.size());
             while (outsiders.hasPrevious()) {
                 sources.addFirst(outsiders.previous());
             }

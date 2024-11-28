@@ -4,9 +4,7 @@ import com.lootbeams.Configuration;
 import com.lootbeams.config.Config;
 import com.lootbeams.config.ConfigurationManager;
 import com.lootbeams.modules.rarity.ItemWithRarity;
-import com.lootbeams.modules.rarity.RarityCache;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.datafixers.util.Either;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.player.LocalPlayer;
@@ -16,11 +14,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.phys.Vec3;
-import org.joml.Quaternionf;
 
 import java.awt.*;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -31,7 +27,8 @@ public class NameTagRenderer {
         ItemEntity item = itemWithRarity.item();
         if (Minecraft.getInstance().player.isCrouching() || ((((Boolean) ConfigurationManager.request(Config.RENDER_NAMETAGS_ONLOOK)) && isLookingAt(Minecraft.getInstance().player, item, Configuration.NAMETAG_LOOK_SENSITIVITY.get())))) {
 
-            Color color = itemWithRarity.rarity().getColor();
+            Color color = itemWithRarity.rarity().color();
+            int rgb = color.getRGB();
 /*
             {
                 stack.pushPose();
@@ -64,9 +61,8 @@ public class NameTagRenderer {
                 float foregroundAlpha = ConfigurationManager.request(Double.class, Config.NAMETAG_TEXT_ALPHA).floatValue();
                 float backgroundAlpha = ConfigurationManager.request(Double.class, Config.NAMETAG_BACKGROUND_ALPHA).floatValue();
                 double yOffset = ConfigurationManager.request(Double.class, Config.NAMETAG_Y_OFFSET);
-                int foregroundColor = new Color(color.getRed(), color.getGreen(), color.getBlue(), (int) (255 * foregroundAlpha)).getRGB();
+                int foregroundColor = rgb;
                 int backgroundColor = new Color(color.getRed(), color.getGreen(), color.getBlue(), (int) (255 * backgroundAlpha)).getRGB();
-
                 stack.pushPose();
 
                 //Render nametags at heights based on player distance
@@ -79,18 +75,21 @@ public class NameTagRenderer {
                 //Render stack counts on nametag
                 Font fontrenderer = Minecraft.getInstance().font;
 
-                List<String> ask = NameTagCache.ask(itemWithRarity);
-                if (ask == null ) return;
+                List<Component> ask = NameTagCache.ask(itemWithRarity);
+                if (ask == null) return;
 
-                //System.out.println(backgroundColor);
-                stack.translate(0, 0, -10);
-                ask.stream()
-                        .filter(String::isBlank)
-                        .forEach(x -> {
 
-                            renderText(fontrenderer, stack, buffer, x, foregroundColor, backgroundColor, backgroundAlpha);
-                            stack.translate(0, Minecraft.getInstance().font.lineHeight, 0.0f);
-                        });
+                stack.translate(0, 2, -10);
+
+                for (Component c : ask) {
+                    String s = c.getString();
+                    if (s.isBlank()) continue;
+                    renderText(fontrenderer, stack, buffer, s, foregroundColor, backgroundColor, backgroundAlpha);
+                    stack.translate(0, Minecraft.getInstance().font.lineHeight, 0.0f);
+
+                }
+
+
                 stack.popPose();
                 //Move closer to the player so we dont render in beam, and render the tag
 
@@ -107,13 +106,13 @@ public class NameTagRenderer {
                 List<Component> right = ask1.right().get();*/
 
 
-
             }
         }
 
     }
 
     private static void renderText(Font fontRenderer, PoseStack stack, MultiBufferSource buffer, String text, int foregroundColor, int backgroundColor, float backgroundAlpha) {
+
         if (Configuration.BORDERS.get()) {
             float w = -fontRenderer.width(text) / 2f;
             int bg = new Color(0, 0, 0, (int) (255 * backgroundAlpha)).getRGB();
@@ -123,7 +122,6 @@ public class NameTagRenderer {
             fontRenderer.drawInBatch(text, (float) (-fontRenderer.width(text) / 2), 0f, foregroundColor, false, stack.last().pose(), buffer, Font.DisplayMode.NORMAL, backgroundColor, 15728864);
         }
     }
-
 
 
     /**

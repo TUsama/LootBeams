@@ -35,7 +35,7 @@ public class BeamRenderer {
         ItemEntity itemEntity = itemWithRarity.item();
 
 
-        Color color = itemWithRarity.rarity().getColor();
+        Color color = itemWithRarity.rarity().color();
         float R = color.getRed() / 255f;
         float G = color.getGreen() / 255f;
         float B = color.getBlue() / 255f;

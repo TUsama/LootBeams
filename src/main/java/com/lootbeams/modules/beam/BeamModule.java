@@ -1,10 +1,9 @@
 package com.lootbeams.modules.beam;
 
+import com.lootbeams.LootBeams;
 import com.lootbeams.events.EntityRenderDispatcherHookEvent;
-import com.lootbeams.events.LBEventBus;
 import com.lootbeams.modules.ILBModule;
 import net.minecraft.client.Minecraft;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 
@@ -20,6 +19,6 @@ public class BeamModule implements ILBModule {
 
     @Override
     public void tryEnable() {
-        LBEventBus.INSTANCE.register(INSTANCE);
+        LootBeams.EVENT_BUS.register(INSTANCE);
     }
 }

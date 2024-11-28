@@ -1,15 +1,14 @@
 package com.lootbeams.mixin.client;
 
+import com.lootbeams.LootBeams;
 import com.lootbeams.config.Config;
 import com.lootbeams.config.ConfigurationManager;
 import com.lootbeams.events.EntityRenderDispatcherHookEvent;
-import com.lootbeams.events.LBEventBus;
 import com.lootbeams.modules.beam.BeamRenderer;
 import com.lootbeams.modules.rarity.ItemWithRarity;
 import com.lootbeams.modules.rarity.RarityCache;
 import com.lootbeams.utils.Checker;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.datafixers.util.Either;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
@@ -52,12 +51,12 @@ public abstract class EntityRenderDispatcherMixin {
             if (itemWithRarity == null) return;
 
             EntityRenderDispatcherHookEvent.RenderLootBeamEvent renderLootBeamEvent = new EntityRenderDispatcherHookEvent.RenderLootBeamEvent(itemWithRarity, worldX, worldY, worldZ, entityYRot, partialTicks, poseStack, buffers, light);
-            LBEventBus.INSTANCE.post(renderLootBeamEvent);
+            LootBeams.EVENT_BUS.post(renderLootBeamEvent);
             //should be noticed that the tooltips will only work when beam is enabled.
             Config.TooltipsStatus request = ConfigurationManager.request(Config.ENABLE_TOOLTIPS);
             if (request != Config.TooltipsStatus.NONE) {
                 EntityRenderDispatcherHookEvent.RenderLBTooltipsEvent renderLBTooltipsEvent = new EntityRenderDispatcherHookEvent.RenderLBTooltipsEvent(itemWithRarity, worldX, worldY, worldZ, entityYRot, partialTicks, poseStack, buffers, light);
-                LBEventBus.INSTANCE.post(renderLBTooltipsEvent);
+                LootBeams.EVENT_BUS.post(renderLBTooltipsEvent);
             }
         }
 

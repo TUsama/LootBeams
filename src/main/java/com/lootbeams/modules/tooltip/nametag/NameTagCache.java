@@ -26,13 +26,13 @@ import java.util.stream.Collectors;
 
 public class NameTagCache implements ILBModuleRenderCache<NameTagCache.Data, ItemWithRarity> {
     private final static NameTagCache CACHE = new NameTagCache();
-    private final static WeakHashMap<ItemStack, List<String>> nameTagMap = new WeakHashMap<>(500);
+    private final static WeakHashMap<ItemStack, List<Component>> nameTagMap = new WeakHashMap<>(500);
     private final static Object lock = new Object();
     private static boolean mark = false;
 
     public final static String langKeyFormat = "lootbeams.fake_rarity.";
 
-    public static List<String> ask(ItemWithRarity itemWithRarity) {
+    public static List<Component> ask(ItemWithRarity itemWithRarity) {
         ItemStack item = itemWithRarity.item().getItem();
 
         if (nameTagMap.containsKey(item)) {
@@ -51,7 +51,7 @@ public class NameTagCache implements ILBModuleRenderCache<NameTagCache.Data, Ite
             return false;
         }
         synchronized (lock) {
-            nameTagMap.put(item, components.stream().map(Component::getString).toList());
+            nameTagMap.put(item, components);
         }
         return true;
     }
@@ -99,7 +99,7 @@ public class NameTagCache implements ILBModuleRenderCache<NameTagCache.Data, Ite
 
 
                             provide(itemWithRarity, List.of(finalName,
-                                    Component.literal(StringUtils.capitalize(itemWithRarity.rarity().getName().toLowerCase()))));
+                                    itemWithRarity.rarity().name()));
                         });
             }
             mark = true;
