@@ -28,11 +28,14 @@ public class SoundModule implements ILBModule {
         if (event.LBItemEntity.isSounded()) return;
         ItemEntity itemEntity = event.LBItemEntity.item();
         Item item = itemEntity.getItem().getItem();
+
         if ((ConfigurationManager.<Boolean>request(Config.SOUND_ALL_ITEMS) && !Checker.isItemInRegistryList(ConfigurationManager.request(Config.BLACKLIST), item))
                 || (Configuration.SOUND_ONLY_EQUIPMENT.get() && Checker.isEquipmentItem(item))
                 || (Configuration.SOUND_ONLY_RARE.get() && event.LBItemEntity.rarity().absoluteOrdinal() != 0)
                 || Checker.isItemInRegistryList(Configuration.SOUND_ONLY_WHITELIST.get(), item)) {
+
             WeighedSoundEvents sound = Minecraft.getInstance().getSoundManager().getSoundEvent(LootBeams.LOOT_DROP);
+
             if (sound != null && Minecraft.getInstance().level != null) {
                 Minecraft.getInstance().level.playSound(Minecraft.getInstance().player, itemEntity.getX(), itemEntity.getY(), itemEntity.getZ(), SoundEvent.createFixedRangeEvent(LootBeams.LOOT_DROP, 8.0f), SoundSource.AMBIENT, 0.1f * Configuration.SOUND_VOLUME.get().floatValue(), 1.0f);
                 LBItemEntityCache.updateSoundStatus(itemEntity.getItem());
@@ -44,6 +47,7 @@ public class SoundModule implements ILBModule {
     @Override
     public void tryEnable() {
         if (ConfigurationManager.<Boolean>request(Config.SOUND)){
+            System.out.println("sound module enable!");
             LootBeams.EVENT_BUS.register(INSTANCE);
         }
     }

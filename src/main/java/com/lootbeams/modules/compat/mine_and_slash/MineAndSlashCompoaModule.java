@@ -23,7 +23,7 @@ import static io.vavr.API.*;
 
 public class MineAndSlashCompoaModule implements ILBCompatModule {
 
-    private final static List<Rarity> rarities = new ArrayList<>();
+    private final static List<String> rarities = new ArrayList<>();
 
 
     @Override
@@ -36,14 +36,14 @@ public class MineAndSlashCompoaModule implements ILBCompatModule {
         if (shouldBeEnable()) {
             LootBeams.LOGGER.info("Detected Mine and Slash, enable compat module!");
             LootBeams.EVENT_BUS.register(new MineAndSlashCompoaModule());
-            rarities.add(Rarity.COMMON);
-            rarities.add(VanillaRarities.UNCOMMON_ITEM);
-            rarities.add(Rarity.RARE);
-            rarities.add(Rarity.EPIC);
-            rarities.add(VanillaRarities.LEGENDARY_ITEM);
-            rarities.add(VanillaRarities.MYTHIC_ITEM);
-            rarities.add(VanillaRarities.UNIQUE_ITEM);
-            rarities.add(VanillaRarities.RUNED_ITEM);
+            rarities.add("common");
+            rarities.add("uncommon");
+            rarities.add("rare");
+            rarities.add("epic");
+            rarities.add("legendary");
+            rarities.add("mythic");
+            rarities.add("unique");
+            rarities.add("runeword");
 
         }
     }
@@ -51,14 +51,17 @@ public class MineAndSlashCompoaModule implements ILBCompatModule {
     @SubscribeEvent
     public void onEnable(RegisterLBRarityEvent.Pre event) {
         event.register(itemEntity ->
+
                 Match(Match(itemEntity.getItem()).of(
+                        //ItemEntity -> GearRarity
                 Case($(stack -> StackSaving.GEARS.has(stack)), stack -> Option.some(StackSaving.GEARS.loadFrom(stack).getRarity())),
                 Case($(), stack -> Option.<GearRarity>none())
         )).of(
+                //GearRarity -> LBRarity
                 Case($(option -> !option.isEmpty()), option -> Option.some(LBItemEntity.of(itemEntity, LBRarity.of(
                         option.get().locName(),
                         new Color(option.get().textFormatting().getColor()),
-                        rarities.indexOf(option.get().getVanillaRarity())
+                        rarities.indexOf(option.get().guid)
                 )))),
                 Case($(), option -> Option.none())
         ));

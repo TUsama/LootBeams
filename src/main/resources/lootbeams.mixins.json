@@ -5,7 +5,6 @@
   "compatibilityLevel": "JAVA_8",
   "refmap": "lootbeams.refmap.json",
   "mixins": [
-    "ItemEntityMixin"
   ],
   "client": [
     "client.EntityRenderDispatcherMixin"
