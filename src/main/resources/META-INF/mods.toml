@@ -25,3 +25,15 @@ mandatory = true
 versionRange = "[1.20.1,)"
 ordering = "NONE"
 side = "BOTH"
+[[dependencies.lootbeams]]
+modId = "apotheosis"
+mandatory = false
+versionRange = "[7.2.0,)"
+ordering = "AFTER"
+side = "CLIENT"
+[[dependencies.lootbeams]]
+modId = "mmorpg"
+mandatory = false
+versionRange = "[5.9.0,)"
+ordering = "AFTER"
+side = "CLIENT"
