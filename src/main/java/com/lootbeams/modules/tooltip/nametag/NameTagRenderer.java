@@ -19,6 +19,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.phys.Vec3;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -80,14 +81,22 @@ public class NameTagRenderer {
 
                 //Render stack counts on nametag
                 Font fontrenderer = Minecraft.getInstance().font;
-
-                List<Component> ask = NameTagCache.ask(LBItemEntity);
-                if (ask == null) return;
+                List<Component> components = new ArrayList<>();
+                Component name = item.getItem().getHoverName();
+                Component rarityName = LBItemEntity.rarity().name();
+                if (Boolean.TRUE.equals(ConfigurationManager.<Boolean>request(Config.RENDER_STACKCOUNT))) {
+                    int count = item.getItem().getCount();
+                    if (count > 1) {
+                        name = name.plainCopy().append(" x" + count);
+                    }
+                }
+                components.add(name);
+                components.add(rarityName);
 
 
                 stack.translate(0, 2, -10);
 
-                for (Component c : ask) {
+                for (Component c : components) {
                     String s = c.getString();
                     if (s.isBlank()) continue;
                     renderText(fontrenderer, stack, buffer, s, foregroundColor, backgroundColor, backgroundAlpha);

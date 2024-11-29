@@ -55,9 +55,7 @@ public enum Config {
 
     CUSTOM_RARITIES(List.class),
 
-    GLOWING_BEAM(Boolean.class),
 
-    WHITE_CENTER(Boolean.class),
     PARTICLE_SIZE(Double.class),
     PARTICLE_SPEED(Double.class),
     PARTICLE_RADIUS(Double.class),

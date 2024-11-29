@@ -51,12 +51,7 @@ public class ClientSetup {
 		});
 	}
 
-	@SubscribeEvent
-	public static void onClientTick(TickEvent.ClientTickEvent event) {
-		if(event.phase.equals(TickEvent.Phase.START)) {
-			if(playSoundCooldown > 0) playSoundCooldown--;
-		}
-	}
+
 	@SubscribeEvent
 	public static void onHudRender(RenderGuiOverlayEvent.Post event) {
 
@@ -220,29 +215,6 @@ public class ClientSetup {
 
 		return light;
 	}
-
-	public static int playSoundCooldown = 0;
-	public static void playDropSound(ItemEntity itemEntity) {
-		if(playSoundCooldown != 0) return;
-		if (!Configuration.SOUND.get()) {
-			return;
-		}
-
-		Item item = itemEntity.getItem().getItem();
-		if ((Configuration.SOUND_ALL_ITEMS.get() && !Checker.isItemInRegistryList(Configuration.BLACKLIST.get(), item))
-				|| (Configuration.SOUND_ONLY_EQUIPMENT.get() && Checker.isEquipmentItem(item))
-				|| (Configuration.SOUND_ONLY_RARE.get() && BeamRenderer.compatRarityCheck(itemEntity, false))
-				|| Checker.isItemInRegistryList(Configuration.SOUND_ONLY_WHITELIST.get(), item)) {
-			WeighedSoundEvents sound = Minecraft.getInstance().getSoundManager().getSoundEvent(LootBeams.LOOT_DROP);
-			if(sound != null && Minecraft.getInstance().level != null) {
-				Minecraft.getInstance().level.playSound(Minecraft.getInstance().player, itemEntity.getX(), itemEntity.getY(), itemEntity.getZ(), SoundEvent.createFixedRangeEvent(LootBeams.LOOT_DROP, 8.0f), SoundSource.AMBIENT, 0.1f * Configuration.SOUND_VOLUME.get().floatValue(), 1.0f);
-				playSoundCooldown = 3;
-			}
-		}
-	}
-
-
-
 
 
 }

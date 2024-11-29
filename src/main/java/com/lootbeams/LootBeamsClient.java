@@ -1,5 +1,6 @@
 package com.lootbeams;
 
+import com.lootbeams.config.ConfigHandlers;
 import com.lootbeams.modules.ModulesManager;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
@@ -8,7 +9,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterShadersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
@@ -26,7 +26,8 @@ public class LootBeamsClient {
     @SubscribeEvent
     public static void registerModules(FMLClientSetupEvent event){
         System.out.println("register all modules");
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> ModulesManager::registerAll);
+        ModulesManager.registerAll();
+        ConfigHandlers.init();
     }
 
     @SubscribeEvent

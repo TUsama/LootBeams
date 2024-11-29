@@ -108,12 +108,12 @@ public class BeamRenderer {
         stack.popPose();
 
         {
-            if (Configuration.GLOW_EFFECT.get() && itemEntity.onGround()) {
+            if (ConfigurationManager.<Boolean>request(Config.GLOW_EFFECT) && itemEntity.onGround()) {
 
                 stack.pushPose();
                 stack.translate(0, 0.01, 0);
-                float radius = Configuration.GLOW_EFFECT_RADIUS.get().floatValue();
-                if (Configuration.ANIMATE_GLOW.get()) {
+                float radius = ConfigurationManager.<Double>request(Config.GLOW_EFFECT_RADIUS).floatValue();
+                if (ConfigurationManager.request(Config.ANIMATE_GLOW)) {
                     beamAlpha *= (Math.abs(Math.cos((entityTime + pticks) / 10f)) * 0.5f + 0.5f) * 1.3f;
                     radius *= ((Math.abs(Math.cos((entityTime + pticks) / 10f) * 0.45f)) * 0.75f + 0.75f);
                 }

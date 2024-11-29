@@ -3,8 +3,8 @@ package com.lootbeams;
 import com.lootbeams.config.Config;
 import com.lootbeams.config.ConfigurationManager;
 import com.lootbeams.config.IConfigurationProvider;
+import com.lootbeams.data.rarity.ConfigCustomRarity;
 import com.lootbeams.data.rarity.Order;
-import com.lootbeams.modules.tooltip.nametag.NameTagCache;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 import java.util.ArrayList;
@@ -56,10 +56,8 @@ public class Configuration implements IConfigurationProvider {
 	public static ForgeConfigSpec.ConfigValue<List<String>> CUSTOM_RARITIES;
 
 
-	public static ForgeConfigSpec.BooleanValue GLOWING_BEAM;
 
 
-	public static ForgeConfigSpec.BooleanValue WHITE_CENTER;
 	public static ForgeConfigSpec.DoubleValue PARTICLE_SIZE;
 	public static ForgeConfigSpec.DoubleValue PARTICLE_SPEED;
 	public static ForgeConfigSpec.DoubleValue PARTICLE_RADIUS;
@@ -92,10 +90,6 @@ public class Configuration implements IConfigurationProvider {
 		clientBuilder.comment("Beam Config").push("Loot Beams");
 		ENABLE_BEAM = clientBuilder.define("enable_beam", true);
 
-		RENDER_NAME_COLOR = clientBuilder.comment("If beams should be colored the same as the Items name (excludes name colors from rarity). This has priority over render_rarity_color.").define("render_name_color", true);
-
-
-		RENDER_RARITY_COLOR = clientBuilder.comment("If beams should be colored the same as the Items rarity.").define("render_rarity_color", true);
 
 
 		RENDER_DISTANCE = clientBuilder.comment("How close the player has to be to see the beam. (note: in vanill ItemEntities stop rendering at 24 blocks.)").defineInRange("render_distance", 48D, 0D, 1024D);
@@ -127,12 +121,6 @@ public class Configuration implements IConfigurationProvider {
 
 
 		SOLID_BEAM = clientBuilder.comment("If the Loot Beam should use a solid texture or the beacon style texture.").define("solid_beam", true);
-
-
-		WHITE_CENTER = clientBuilder.comment("If the Loot Beam should have a white center.").define("white_center", true);
-
-
-		GLOWING_BEAM = clientBuilder.comment("If the Loot Beam should be glowing.").define("glowing_beam", true);
 
 
 		GLOW_EFFECT = clientBuilder.comment("If the Loot Beam should have a glow effect around the base of the item.").define("glow_effect", true);
@@ -265,7 +253,7 @@ public class Configuration implements IConfigurationProvider {
 
 
 
-		CUSTOM_RARITIES = clientBuilder.comment("Add custom rarity text for your modpack. To use this you need to declare the new rarity with the format of Tag, like '#rarity:mythic'. You also need to declare its color in COLOR_OVERRIDES config. You can also provide the lang if you want it can be localized, the format is '" + NameTagCache.langKeyFormat + "xxx'. This is really only used for modpacks.").define("custom_rarities", new ArrayList<>());
+		CUSTOM_RARITIES = clientBuilder.comment("Add custom rarity text for your modpack. To use this you need to declare the new rarity with the format of Tag, like '#rarity:mythic'. You also need to declare its color in COLOR_OVERRIDES config. You can also provide the lang if you want it can be localized, the format is '" + ConfigCustomRarity.langKeyFormat + "xxx'. This is really only used for modpacks.").define("custom_rarities", new ArrayList<>());
 
 
 
@@ -321,8 +309,6 @@ public class Configuration implements IConfigurationProvider {
 		ConfigurationManager.insert(Config.BEAM_ALPHA, () -> BEAM_ALPHA.get());
 		ConfigurationManager.insert(Config.BEAM_FADE_DISTANCE, () -> BEAM_FADE_DISTANCE.get());
 		ConfigurationManager.insert(Config.SOLID_BEAM, () -> SOLID_BEAM.get());
-		ConfigurationManager.insert(Config.WHITE_CENTER, () -> WHITE_CENTER.get());
-		ConfigurationManager.insert(Config.GLOWING_BEAM, () -> GLOWING_BEAM.get());
 		ConfigurationManager.insert(Config.GLOW_EFFECT, () -> GLOW_EFFECT.get());
 		ConfigurationManager.insert(Config.GLOW_EFFECT_RADIUS, () -> GLOW_EFFECT_RADIUS.get());
 		ConfigurationManager.insert(Config.ANIMATE_GLOW, () -> ANIMATE_GLOW.get());

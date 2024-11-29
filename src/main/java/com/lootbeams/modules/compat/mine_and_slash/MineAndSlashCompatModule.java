@@ -8,9 +8,7 @@ import com.lootbeams.data.rarity.LBRarity;
 import com.robertx22.mine_and_slash.database.data.rarities.GearRarity;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.uncommon.datasaving.StackSaving;
-import com.robertx22.mine_and_slash.uncommon.interfaces.data_items.VanillaRarities;
 import io.vavr.control.Option;
-import net.minecraft.world.item.Rarity;
 import net.minecraftforge.fml.ModList;
 import net.neoforged.bus.api.SubscribeEvent;
 
@@ -21,7 +19,7 @@ import java.util.List;
 
 import static io.vavr.API.*;
 
-public class MineAndSlashCompoaModule implements ILBCompatModule {
+public class MineAndSlashCompatModule implements ILBCompatModule {
 
     private final static List<String> rarities = new ArrayList<>();
 
@@ -35,7 +33,7 @@ public class MineAndSlashCompoaModule implements ILBCompatModule {
     public void tryEnable() {
         if (shouldBeEnable()) {
             LootBeams.LOGGER.info("Detected Mine and Slash, enable compat module!");
-            LootBeams.EVENT_BUS.register(new MineAndSlashCompoaModule());
+            LootBeams.EVENT_BUS.register(new MineAndSlashCompatModule());
             rarities.add("common");
             rarities.add("uncommon");
             rarities.add("rare");

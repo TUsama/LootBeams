@@ -4,6 +4,8 @@ import com.google.common.collect.ImmutableMap;
 import com.lootbeams.LootBeams;
 import com.lootbeams.config.Config;
 import com.lootbeams.config.ConfigurationManager;
+import com.lootbeams.config.IConfigHandler;
+import com.lootbeams.config.impl.ModifyingConfigHandler;
 import com.lootbeams.data.LBItemEntity;
 import com.lootbeams.utils.Attempt;
 import com.mojang.datafixers.util.Pair;
@@ -14,20 +16,26 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class ConfigColorOverride {
+public class ConfigColorOverride extends ModifyingConfigHandler {
 
-    static final List<String> list = Arrays.stream(Order.values())
-            .map(Enum::toString)
-            .toList();
 
-    static final Map<Order, List<Pair<String, Color>>> configMap;
+    private final List<String> list;
 
-    static {
+    private final Map<Order, List<Pair<String, Color>>> configMap;
+
+    private final List<String> overrides = ConfigurationManager.request(Config.COLOR_OVERRIDES);
+    private final List<String> order = ConfigurationManager.request(Config.COLOR_APPLY_ORDER);
+
+    public ConfigColorOverride() {
         List<String> overrides = ConfigurationManager.request(Config.COLOR_OVERRIDES);
+        this.list = Arrays.stream(Order.values())
+                .map(Enum::toString)
+                .toList();
+
         if (overrides.isEmpty()) {
-            configMap = ImmutableMap.of();
+            this.configMap = ImmutableMap.of();
         } else {
-            configMap = overrides.stream().filter((s) -> (!s.isEmpty()))
+            this.configMap = overrides.stream().filter((s) -> (!s.isEmpty()))
                     .map(s -> s.split("="))
                     .filter(strings -> strings.length == 2)
                     //validate color
@@ -42,22 +50,21 @@ public class ConfigColorOverride {
         }
     }
 
-    public static LBItemEntity tryGetConfigRarity(LBItemEntity LBItemEntity) {
 
-        List<String> overrides = ConfigurationManager.request(Config.COLOR_OVERRIDES);
-        List<String> order = ConfigurationManager.request(Config.COLOR_APPLY_ORDER);
+    @Override
+    public LBItemEntity modify(LBItemEntity lbItemEntity) {
         if (!overrides.isEmpty()) {
 
             return order.stream()
                     .filter(x -> !list.contains(x))
                     .map(Order::valueOf)
                     .filter(order1 -> configMap.get(order1) != null)
-                    .map(order1 -> order1.mutate.apply(configMap.get(order1), LBItemEntity))
+                    .map(order1 -> order1.mutate.apply(configMap.get(order1), lbItemEntity))
                     .findFirst()
-                    .orElse(LBItemEntity);
+                    .orElse(lbItemEntity);
 
 
         }
-        return LBItemEntity;
+        return lbItemEntity;
     }
 }

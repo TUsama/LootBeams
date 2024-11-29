@@ -1,5 +1,7 @@
 package com.lootbeams.data;
 
+import com.lootbeams.config.ConfigHandlers;
+import com.lootbeams.config.impl.ModifyingConfigHandler;
 import com.lootbeams.data.rarity.ConfigColorOverride;
 import com.lootbeams.data.rarity.LBRarityContainer;
 import com.lootbeams.modules.ILBModuleRenderCache;
@@ -51,8 +53,11 @@ public class LBItemEntityCache implements ILBModuleRenderCache<LBRarityContainer
     public BiConsumer<LBRarityContainer, ItemEntity> getDataHandler() {
         return ((lbRarityContainer, itemEntity) -> {
             LBItemEntity itemRarity = LBRarityContainer.getItemWithRarity(itemEntity);
-            LBItemEntity LBItemEntity = ConfigColorOverride.tryGetConfigRarity(itemRarity);
-            provide(itemEntity, new SoftReference<>(LBItemEntity));
+            for (ModifyingConfigHandler handler : ConfigHandlers.INSTANCE.getHandlers()) {
+                itemRarity = handler.modify(itemRarity);
+            }
+
+            provide(itemEntity, new SoftReference<>(itemRarity));
             System.out.println("put new one!");
             mark = false;
         });
