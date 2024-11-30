@@ -9,6 +9,9 @@ import com.lootbeams.data.LBItemEntity;
 import com.lootbeams.data.LBItemEntityCache;
 import com.lootbeams.utils.Checker;
 import com.mojang.blaze3d.vertex.PoseStack;
+import io.vavr.Function0;
+import io.vavr.Function1;
+import io.vavr.Lazy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
@@ -35,30 +38,28 @@ public abstract class EntityRenderDispatcherMixin {
     )
     private void lootBeamHook(Entity entity, double worldX, double worldY, double worldZ, float entityYRot, float partialTicks, PoseStack poseStack, MultiBufferSource buffers, int light, CallbackInfo ci) {
         if (!(entity instanceof ItemEntity itemEntity)) return;
-        if (Minecraft.getInstance().player.distanceToSqr(itemEntity) > Math.pow(ConfigurationManager.request(Double.class, Config.RENDER_DISTANCE), 2))
-            return;
-        boolean shouldRender = ((Boolean) ConfigurationManager.request(Config.ALL_ITEMS))
-                || (((Boolean) ConfigurationManager.request(Config.ONLY_EQUIPMENT)) && Checker.isEquipmentItem(itemEntity.getItem().getItem()))
-                || (((Boolean) ConfigurationManager.request(Config.ONLY_RARE)) && BeamRenderer.compatRarityCheck(itemEntity, false))
+        Lazy<SoftReference<LBItemEntity>> lbItemEntity = Lazy.of(() -> LBItemEntityCache.ask(itemEntity));
+        if (lbItemEntity.get() == null) return;
+        LBItemEntity lbItemEntity1 = lbItemEntity.get().get();
+        boolean shouldRender = ConfigurationManager.<Boolean>request(Config.ALL_ITEMS)
+                || (ConfigurationManager.<Boolean>request(Config.ONLY_EQUIPMENT) && Checker.isEquipmentItem(itemEntity.getItem().getItem()))
+                || (ConfigurationManager.<Boolean>request(Config.ONLY_RARE) && lbItemEntity1.isCommon())
                 || (Checker.isItemInRegistryList(ConfigurationManager.request(Config.WHITELIST), itemEntity.getItem().getItem())
                 && !Checker.isItemInRegistryList(ConfigurationManager.request(Config.BLACKLIST), itemEntity.getItem().getItem()));
 
-        if (!(shouldRender && (!((Boolean) ConfigurationManager.request(Config.REQUIRE_ON_GROUND)) || itemEntity.onGround())))
+        if (!(shouldRender && (!(ConfigurationManager.<Boolean>request(Config.REQUIRE_ON_GROUND)) || itemEntity.onGround())))
             return;
 
         if (ConfigurationManager.request(Config.ENABLE_BEAM)) {
-            SoftReference<LBItemEntity> ask = LBItemEntityCache.ask(itemEntity);
-            LBItemEntity LBItemEntity = ask.get();
-            if (LBItemEntity == null) return;
 
-            EntityRenderDispatcherHookEvent.RenderLootBeamEvent renderLootBeamEvent = new EntityRenderDispatcherHookEvent.RenderLootBeamEvent(LBItemEntity, worldX, worldY, worldZ, entityYRot, partialTicks, poseStack, buffers, light);
+            EntityRenderDispatcherHookEvent.RenderLootBeamEvent renderLootBeamEvent = new EntityRenderDispatcherHookEvent.RenderLootBeamEvent(lbItemEntity1, worldX, worldY, worldZ, entityYRot, partialTicks, poseStack, buffers, light);
             LootBeams.EVENT_BUS.post(renderLootBeamEvent);
-            //should be noticed that the tooltips will only work when beam is enabled.
-            Config.TooltipsStatus request = ConfigurationManager.request(Config.ENABLE_TOOLTIPS);
-            if (request != Config.TooltipsStatus.NONE) {
-                EntityRenderDispatcherHookEvent.RenderLBTooltipsEvent renderLBTooltipsEvent = new EntityRenderDispatcherHookEvent.RenderLBTooltipsEvent(LBItemEntity, worldX, worldY, worldZ, entityYRot, partialTicks, poseStack, buffers, light);
-                LootBeams.EVENT_BUS.post(renderLBTooltipsEvent);
-            }
+        }
+
+        Config.TooltipsStatus request = ConfigurationManager.request(Config.ENABLE_TOOLTIPS);
+        if (request != Config.TooltipsStatus.NONE) {
+            EntityRenderDispatcherHookEvent.RenderLBTooltipsEvent renderLBTooltipsEvent = new EntityRenderDispatcherHookEvent.RenderLBTooltipsEvent(lbItemEntity1, worldX, worldY, worldZ, entityYRot, partialTicks, poseStack, buffers, light);
+            LootBeams.EVENT_BUS.post(renderLBTooltipsEvent);
         }
 
 

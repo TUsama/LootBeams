@@ -38,7 +38,7 @@ public class SoundModule implements ILBModule {
 
             if (sound != null && Minecraft.getInstance().level != null) {
                 Minecraft.getInstance().level.playSound(Minecraft.getInstance().player, itemEntity.getX(), itemEntity.getY(), itemEntity.getZ(), SoundEvent.createFixedRangeEvent(LootBeams.LOOT_DROP, 8.0f), SoundSource.AMBIENT, 0.1f * Configuration.SOUND_VOLUME.get().floatValue(), 1.0f);
-                LBItemEntityCache.updateSoundStatus(itemEntity.getItem());
+                event.LBItemEntity.updateSounded();
             }
         }
     }
@@ -47,7 +47,6 @@ public class SoundModule implements ILBModule {
     @Override
     public void tryEnable() {
         if (ConfigurationManager.<Boolean>request(Config.SOUND)){
-            System.out.println("sound module enable!");
             LootBeams.EVENT_BUS.register(INSTANCE);
         }
     }

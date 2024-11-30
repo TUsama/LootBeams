@@ -16,15 +16,14 @@ import java.io.IOException;
 import java.util.function.Consumer;
 
 @Mod.EventBusSubscriber(modid = LootBeams.MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
-public class LootBeamsClient {
+public class LootBeamsModClientEvent {
     public static final ResourceLocation GLOW_TEXTURE = new ResourceLocation(LootBeams.MODID, "glow");
 
     public static ShaderInstance PARTICLE_ADDITIVE_MULTIPLY;
 
 
-
     @SubscribeEvent
-    public static void registerModules(FMLClientSetupEvent event){
+    public static void registerModules(FMLClientSetupEvent event) {
         System.out.println("register all modules");
         ModulesManager.registerAll();
         ConfigHandlers.init();

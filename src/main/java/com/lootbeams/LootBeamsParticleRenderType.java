@@ -28,7 +28,7 @@ public class LootBeamsParticleRenderType implements ParticleRenderType {
         GL11.glEnable(GL11.GL_BLEND);
 
         //
-        RenderSystem.setShader(() -> LootBeamsClient.PARTICLE_ADDITIVE_MULTIPLY);
+        RenderSystem.setShader(() -> LootBeamsModClientEvent.PARTICLE_ADDITIVE_MULTIPLY);
         RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA,
                 GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
 

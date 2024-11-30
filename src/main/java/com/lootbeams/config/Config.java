@@ -28,14 +28,13 @@ public enum Config {
     BEAM_Y_OFFSET(Double.class),
     BEAM_ALPHA(Double.class),
     BEAM_FADE_DISTANCE(Double.class),
+    BEAM_FADE_IN_TIME(Integer.class),
 
     SOLID_BEAM(Boolean.class),
-    RENDER_DISTANCE(Double.class),
     REQUIRE_ON_GROUND(Boolean.class),
 
     GLOW_EFFECT(Boolean.class),
     GLOW_EFFECT_RADIUS(Double.class),
-    ANIMATE_GLOW(Boolean.class),
 
     PARTICLES(Boolean.class),
 
@@ -80,7 +79,11 @@ public enum Config {
     SOUND_ONLY_EQUIPMENT(Boolean.class),
     SOUND_ONLY_WHITELIST(List.class),
     SOUND_ONLY_BLACKLIST(List.class),
-    SOUND_ALL_ITEMS(Boolean.class);
+    SOUND_ALL_ITEMS(Boolean.class),
+
+
+    ENABLE_DYNAMIC_PROVIDER(Boolean.class),
+    HALF_ROUND_TICKS(Integer.class);
 
     private final Class<?> type;
 

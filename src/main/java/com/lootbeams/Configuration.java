@@ -34,12 +34,10 @@ public class Configuration implements IConfigurationProvider {
 	public static ForgeConfigSpec.DoubleValue BEAM_FADE_DISTANCE;
 
 	public static ForgeConfigSpec.BooleanValue SOLID_BEAM;
-	public static ForgeConfigSpec.DoubleValue RENDER_DISTANCE;
 	public static ForgeConfigSpec.BooleanValue REQUIRE_ON_GROUND;
 
 	public static ForgeConfigSpec.BooleanValue GLOW_EFFECT;
 	public static ForgeConfigSpec.DoubleValue GLOW_EFFECT_RADIUS;
-	public static ForgeConfigSpec.BooleanValue ANIMATE_GLOW;
 
 	public static ForgeConfigSpec.BooleanValue PARTICLES;
 
@@ -84,15 +82,18 @@ public class Configuration implements IConfigurationProvider {
 	public static ForgeConfigSpec.ConfigValue<List<String>> SOUND_ONLY_BLACKLIST;
 	public static ForgeConfigSpec.BooleanValue SOUND_ALL_ITEMS;
 
+	public static ForgeConfigSpec.BooleanValue ENABLE_DYNAMIC_PROVIDER;
+	public static ForgeConfigSpec.IntValue HALF_ROUND_TICKS;
+	public static ForgeConfigSpec.IntValue BEAM_FADE_IN_TIME;
+
+
 	static {
 		ForgeConfigSpec.Builder clientBuilder = new ForgeConfigSpec.Builder();
 
 		clientBuilder.comment("Beam Config").push("Loot Beams");
 		ENABLE_BEAM = clientBuilder.define("enable_beam", true);
 
-
-
-		RENDER_DISTANCE = clientBuilder.comment("How close the player has to be to see the beam. (note: in vanill ItemEntities stop rendering at 24 blocks.)").defineInRange("render_distance", 48D, 0D, 1024D);
+		BEAM_FADE_IN_TIME = clientBuilder.comment("The ticks of beam fade in.").defineInRange("beam_fade_in_time", 10, 1, 100);
 
 
 		COLOR_OVERRIDES = clientBuilder.comment("Overrides an item's beam color with hex color. Must follow the specific format: (registryname=hexcolor) Or (#tagname=hexcolor). Example: \"minecraft:stone=0xFFFFFF\". This also accepts modids.").define("color_overrides", new ArrayList<>());
@@ -117,7 +118,7 @@ public class Configuration implements IConfigurationProvider {
 		BEAM_ALPHA = clientBuilder.comment("Transparency of the Loot Beam.").defineInRange("beam_alpha", 0.75D, 0D, 1D);
 
 
-		BEAM_FADE_DISTANCE = clientBuilder.comment("The distance from the player the beam should start fading.").defineInRange("beam_fade_distance", 5D, 0D, 100D);
+		BEAM_FADE_DISTANCE = clientBuilder.comment("The distance from the player the beam should start fading.").defineInRange("beam_fade_distance", 15D, 0D, 100D);
 
 
 		SOLID_BEAM = clientBuilder.comment("If the Loot Beam should use a solid texture or the beacon style texture.").define("solid_beam", true);
@@ -129,7 +130,6 @@ public class Configuration implements IConfigurationProvider {
 		GLOW_EFFECT_RADIUS = clientBuilder.comment("The radius of the glow effect.").defineInRange("glow_effect_radius", 0.5D, 0.00001D, 1D);
 
 
-		ANIMATE_GLOW = clientBuilder.comment("If the glow effect should be animated.").define("animate_glow", true);
 
 
 		REQUIRE_ON_GROUND = clientBuilder.comment("If the item must be on the ground to render a beam.").define("require_on_ground", true);
@@ -285,7 +285,10 @@ public class Configuration implements IConfigurationProvider {
 
 
 		clientBuilder.pop();
+		clientBuilder.comment("Dynamic").push("Dynamic");
 
+		ENABLE_DYNAMIC_PROVIDER = clientBuilder.comment("If beam and glow should be dynamic.").define("enable_dynamic", true);
+		HALF_ROUND_TICKS = clientBuilder.comment("the ticks needed for half round").defineInRange("half_round_ticks", 30, 20, 100);
 
 
 		clientBuilder.pop();
@@ -299,7 +302,6 @@ public class Configuration implements IConfigurationProvider {
 		ConfigurationManager.insert(Config.ENABLE_BEAM, () -> ENABLE_BEAM.get());
 		ConfigurationManager.insert(Config.RENDER_NAME_COLOR, () -> RENDER_NAME_COLOR.get());
 		ConfigurationManager.insert(Config.RENDER_RARITY_COLOR, () -> RENDER_RARITY_COLOR.get());
-		ConfigurationManager.insert(Config.RENDER_DISTANCE, () -> RENDER_DISTANCE.get());
 		ConfigurationManager.insert(Config.COLOR_OVERRIDES, () -> COLOR_OVERRIDES.get());
 		ConfigurationManager.insert(Config.COLOR_APPLY_ORDER, () -> COLOR_APPLY_ORDER.get());
 		ConfigurationManager.insert(Config.BEAM_RADIUS, () -> BEAM_RADIUS.get());
@@ -311,7 +313,6 @@ public class Configuration implements IConfigurationProvider {
 		ConfigurationManager.insert(Config.SOLID_BEAM, () -> SOLID_BEAM.get());
 		ConfigurationManager.insert(Config.GLOW_EFFECT, () -> GLOW_EFFECT.get());
 		ConfigurationManager.insert(Config.GLOW_EFFECT_RADIUS, () -> GLOW_EFFECT_RADIUS.get());
-		ConfigurationManager.insert(Config.ANIMATE_GLOW, () -> ANIMATE_GLOW.get());
 		ConfigurationManager.insert(Config.REQUIRE_ON_GROUND, () -> REQUIRE_ON_GROUND.get());
 		ConfigurationManager.insert(Config.PARTICLES, () -> PARTICLES.get());
 		ConfigurationManager.insert(Config.PARTICLE_SIZE, () -> PARTICLE_SIZE.get());
@@ -358,5 +359,8 @@ public class Configuration implements IConfigurationProvider {
 		ConfigurationManager.insert(Config.SOUND_ONLY_WHITELIST, () -> SOUND_ONLY_WHITELIST.get());
 		ConfigurationManager.insert(Config.SOUND_ONLY_BLACKLIST, () -> SOUND_ONLY_BLACKLIST.get());
 		ConfigurationManager.insert(Config.ENABLE_TOOLTIPS, () -> ENABLE_TOOLTIPS.get());
+		ConfigurationManager.insert(Config.ENABLE_DYNAMIC_PROVIDER, () -> ENABLE_DYNAMIC_PROVIDER.get());
+		ConfigurationManager.insert(Config.HALF_ROUND_TICKS, () -> HALF_ROUND_TICKS.get());
+		ConfigurationManager.insert(Config.BEAM_FADE_IN_TIME, () -> BEAM_FADE_IN_TIME.get());
 	}
 }

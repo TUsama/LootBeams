@@ -28,7 +28,6 @@ public class ApotheosisCompatModule implements ILBCompatModule {
     @Override
     public void tryEnable() {
         if (shouldBeEnable()) {
-            LootBeams.LOGGER.info("Detected Apotheosis, enable compat module!");
             LootBeams.EVENT_BUS.register(new ApotheosisCompatModule());
         }
     }

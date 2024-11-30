@@ -1,14 +1,17 @@
 package com.lootbeams.modules.beam;
 
 import com.lootbeams.Configuration;
-import com.lootbeams.LootBeamsClient;
+import com.lootbeams.LootBeamsModClientEvent;
 import com.lootbeams.modules.compat.apothesis.ApotheosisCompat;
 import com.lootbeams.config.Config;
 import com.lootbeams.config.ConfigurationManager;
 import com.lootbeams.data.LBItemEntity;
 import com.lootbeams.modules.beam.vfx.VFXParticle;
+import com.lootbeams.modules.dynamicprovider.DynamicProvider;
+import com.lootbeams.modules.dynamicprovider.DynamicProviderModule;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import io.vavr.control.Option;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -36,13 +39,16 @@ public class BeamRenderer {
 
 
         Color color = LBItemEntity.rarity().color();
+        int lifeTime = LBItemEntity.lifeTime();
+        Integer fadeInTime = ConfigurationManager.<Integer>request(Config.BEAM_FADE_IN_TIME);
+        var fadeInFactor = 1.0f* lifeTime / fadeInTime;
+
         float R = color.getRed() / 255f;
         float G = color.getGreen() / 255f;
         float B = color.getBlue() / 255f;
 
         Double preBeamAlpha = ConfigurationManager.request(Config.BEAM_ALPHA);
 
-        float entityTime = itemEntity.tickCount;
         double distance = Minecraft.getInstance().player.distanceTo(itemEntity);
         float fadeDistance = ((Double) ConfigurationManager.request(Config.BEAM_FADE_DISTANCE)).floatValue();
         //Clefal: we don't actually need that much beamAlpha gimmick.
@@ -58,16 +64,22 @@ public class BeamRenderer {
         float beamHeight = ((Double) ConfigurationManager.request(Config.BEAM_HEIGHT)).floatValue();
         float yOffset = ((Double) ConfigurationManager.request(Config.BEAM_Y_OFFSET)).floatValue();
         if (ConfigurationManager.request(Config.COMMON_SHORTER_BEAM)) {
-            if (!compatRarityCheck(itemEntity, false)) {
+            if (LBItemEntity.isCommon()) {
                 beamHeight *= 0.65f;
                 yOffset -= yOffset;
             }
         }
 
 
-        //I will rewrite the beam rendering code soon! I promise!
         var beamAlpha = preBeamAlpha.floatValue();
+        Option<DynamicProvider> dynamicProvider1 = DynamicProviderModule.getDynamicProvider();
+        if (dynamicProvider1.isDefined()) {
+            beamAlpha *= Math.min(dynamicProvider1.get().getBeamLightFactor(), 1.0f);
+            beamHeight += dynamicProvider1.get().getBeamLightFactor() - 0.3f;
+            beamRadius += 0.005f * dynamicProvider1.get().getGlowFactor();
+        }
 
+        beamAlpha *= fadeInFactor;
 
         stack.pushPose();
         stack.mulPose(quaternionf);
@@ -108,16 +120,12 @@ public class BeamRenderer {
         stack.popPose();
 
         {
+
             if (ConfigurationManager.<Boolean>request(Config.GLOW_EFFECT) && itemEntity.onGround()) {
 
                 stack.pushPose();
                 stack.translate(0, 0.01, 0);
                 float radius = ConfigurationManager.<Double>request(Config.GLOW_EFFECT_RADIUS).floatValue();
-                if (ConfigurationManager.request(Config.ANIMATE_GLOW)) {
-                    beamAlpha *= (Math.abs(Math.cos((entityTime + pticks) / 10f)) * 0.5f + 0.5f) * 1.3f;
-                    radius *= ((Math.abs(Math.cos((entityTime + pticks) / 10f) * 0.45f)) * 0.75f + 0.75f);
-                }
-
                 renderGlow(stack, buffer.getBuffer(BeamRenderType.GLOW), R, G, B, beamAlpha * 0.4f, radius);
                 stack.popPose();
             }
@@ -136,6 +144,9 @@ public class BeamRenderer {
                 }
 
             }*/
+        }
+        if (lifeTime < fadeInTime){
+            LBItemEntity.updateLife();
         }
 
         /*
@@ -179,7 +190,7 @@ public class BeamRenderer {
                     Configuration.PARTICLE_DIRECTION_Y.get(),
                     Configuration.PARTICLE_DIRECTION_Z.get()
             ).multiply(randomDir);
-            addParticle(LootBeamsClient.GLOW_TEXTURE, r, g, b, 1.0f, Configuration.PARTICLE_LIFETIME.get(), RANDOM.nextFloat((float) (0.25f * Configuration.PARTICLE_SIZE.get()), (float) (1.1f * Configuration.PARTICLE_SIZE.get())), new Vec3(
+            addParticle(LootBeamsModClientEvent.GLOW_TEXTURE, r, g, b, 1.0f, Configuration.PARTICLE_LIFETIME.get(), RANDOM.nextFloat((float) (0.25f * Configuration.PARTICLE_SIZE.get()), (float) (1.1f * Configuration.PARTICLE_SIZE.get())), new Vec3(
                     RANDOM.nextDouble(item.getX() - Configuration.PARTICLE_RADIUS.get(), item.getX() + Configuration.PARTICLE_RADIUS.get()),
                     RANDOM.nextDouble(item.getY() - (Configuration.PARTICLE_RADIUS.get() / 3f), item.getY() + (Configuration.PARTICLE_RADIUS.get() / 3f)),
                     RANDOM.nextDouble(item.getZ() - Configuration.PARTICLE_RADIUS.get(), item.getZ() + Configuration.PARTICLE_RADIUS.get())), particleDir, item.position());

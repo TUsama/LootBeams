@@ -1,7 +1,8 @@
-package com.lootbeams.data.rarity;
+package com.lootbeams.data;
 
 import com.lootbeams.LootBeams;
-import com.lootbeams.data.LBItemEntity;
+import com.lootbeams.data.rarity.ILBRarityApplier;
+import com.lootbeams.data.rarity.LBRarity;
 import com.lootbeams.events.RegisterLBRarityEvent;
 import com.lootbeams.modules.ILBModulePersistentData;
 import io.vavr.control.Option;
@@ -10,8 +11,8 @@ import net.minecraft.world.item.Rarity;
 
 import java.util.*;
 
-public class LBRarityContainer implements ILBModulePersistentData {
-    public final static LBRarityContainer INSTANCE = new LBRarityContainer();
+public class InternalLBItemEntityProvider implements ILBModulePersistentData {
+    public final static InternalLBItemEntityProvider INSTANCE = new InternalLBItemEntityProvider();
     private final static LinkedList<ILBRarityApplier> sources = new LinkedList<>();
 
     static {
@@ -19,7 +20,7 @@ public class LBRarityContainer implements ILBModulePersistentData {
     }
 
 
-    public static LBItemEntity getItemWithRarity(ItemEntity entity){
+    public static LBItemEntity getLBItemEntity(ItemEntity entity){
         Iterator<ILBRarityApplier> iterator = sources.iterator();
         while (iterator.hasNext()){
             ILBRarityApplier next = iterator.next();

@@ -1,6 +1,7 @@
 package com.lootbeams.config;
 
 import com.lootbeams.LootBeams;
+import com.lootbeams.config.impl.IConfigReloadable;
 import com.lootbeams.config.impl.ModifyingConfigHandler;
 import com.lootbeams.data.rarity.ConfigColorOverride;
 import com.lootbeams.events.ConfigReloadEvent;
@@ -9,7 +10,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 
 import java.util.List;
 
-public class ConfigHandlers {
+public class ConfigHandlers implements IConfigReloadable {
     public static ConfigHandlers INSTANCE = new ConfigHandlers();
     @Getter
     private List<ModifyingConfigHandler> handlers;
@@ -31,6 +32,7 @@ public class ConfigHandlers {
     }
 
     @SubscribeEvent
+    @Override
     public void onReload(ConfigReloadEvent event){
         INSTANCE.handlers.clear();
         INSTANCE.registerAll();
