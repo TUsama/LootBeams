@@ -38,9 +38,8 @@ public abstract class EntityRenderDispatcherMixin {
     )
     private void lootBeamHook(Entity entity, double worldX, double worldY, double worldZ, float entityYRot, float partialTicks, PoseStack poseStack, MultiBufferSource buffers, int light, CallbackInfo ci) {
         if (!(entity instanceof ItemEntity itemEntity)) return;
-        Lazy<SoftReference<LBItemEntity>> lbItemEntity = Lazy.of(() -> LBItemEntityCache.ask(itemEntity));
-        if (lbItemEntity.get() == null) return;
-        LBItemEntity lbItemEntity1 = lbItemEntity.get().get();
+
+        LBItemEntity lbItemEntity1 = LBItemEntityCache.ask(itemEntity);
         boolean shouldRender = ConfigurationManager.<Boolean>request(Config.ALL_ITEMS)
                 || (ConfigurationManager.<Boolean>request(Config.ONLY_EQUIPMENT) && Checker.isEquipmentItem(itemEntity.getItem().getItem()))
                 || (ConfigurationManager.<Boolean>request(Config.ONLY_RARE) && lbItemEntity1.isCommon())

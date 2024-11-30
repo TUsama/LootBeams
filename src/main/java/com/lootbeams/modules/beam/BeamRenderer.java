@@ -37,11 +37,10 @@ public class BeamRenderer {
     public static void renderLootBeam(PoseStack stack, MultiBufferSource buffer, float pticks, LBItemEntity LBItemEntity, Quaternionf quaternionf) {
         ItemEntity itemEntity = LBItemEntity.item();
 
-
         Color color = LBItemEntity.rarity().color();
         int lifeTime = LBItemEntity.lifeTime();
         Integer fadeInTime = ConfigurationManager.<Integer>request(Config.BEAM_FADE_IN_TIME);
-        var fadeInFactor = 1.0f* lifeTime / fadeInTime;
+        var fadeInFactor = 1.0f * lifeTime / fadeInTime;
 
         float R = color.getRed() / 255f;
         float G = color.getGreen() / 255f;

@@ -1,5 +1,7 @@
 package com.lootbeams.data;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.lootbeams.config.ConfigHandlers;
 import com.lootbeams.config.impl.ModifyingConfigHandler;
 import com.lootbeams.modules.ILBModuleRenderCache;
@@ -8,37 +10,34 @@ import net.minecraft.world.item.ItemStack;
 
 import java.lang.ref.SoftReference;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 
 public class LBItemEntityCache implements ILBModuleRenderCache<InternalLBItemEntityProvider, ItemEntity> {
-    private final static ConcurrentHashMap<ItemStack, SoftReference<LBItemEntity>> rarityMap = new ConcurrentHashMap<>(500);
+
+    private final static Cache<ItemStack, LBItemEntity> cache = CacheBuilder.newBuilder()
+            .maximumSize(200)
+            .expireAfterAccess(30, TimeUnit.SECONDS)
+            .build();
     private final static LBItemEntityCache INSTANCE = new LBItemEntityCache();
     private final static Object lock = new Object();
 
     private static boolean mark = false;
 
-    public static SoftReference<LBItemEntity> ask(ItemEntity entity) {
+    public static LBItemEntity ask(ItemEntity entity) {
         ItemStack item = entity.getItem();
-
-        if (rarityMap.containsKey(item)) {
-            if (rarityMap.get(item).get() == null) {
-                INSTANCE.handle(InternalLBItemEntityProvider.INSTANCE, entity, mark);
-            }
-            return rarityMap.get(item);
+        LBItemEntity ifPresent = cache.getIfPresent(item);
+        if (ifPresent == null) {
+            INSTANCE.handle(InternalLBItemEntityProvider.INSTANCE, entity, mark);
         }
-        INSTANCE.handle(InternalLBItemEntityProvider.INSTANCE, entity, mark);
-        System.out.println(rarityMap.size());
-        return rarityMap.get(item);
+        //System.out.println(cache.getIfPresent(item).rarity());
+        return cache.getIfPresent(item);
     }
 
 
 
-    protected static boolean provide(ItemEntity entity, SoftReference<LBItemEntity> itemWithRarity) {
-        if (rarityMap.containsKey(entity.getItem())) {
-            return false;
-        }
-        rarityMap.put(entity.getItem(), itemWithRarity);
-        return true;
+    protected static void provide(ItemEntity entity, LBItemEntity itemWithRarity) {
+        cache.put(entity.getItem(), itemWithRarity);
     }
 
     @Override
@@ -50,7 +49,7 @@ public class LBItemEntityCache implements ILBModuleRenderCache<InternalLBItemEnt
                 lbItemEntity = handler.modify(lbItemEntity);
             }
 
-            provide(itemEntity, new SoftReference<>(lbItemEntity));
+            provide(itemEntity, lbItemEntity);
             mark = false;
         });
     }
