@@ -1,5 +1,7 @@
 package com.lootbeams.data;
 
+import com.lootbeams.config.Config;
+import com.lootbeams.config.ConfigurationManager;
 import com.lootbeams.data.rarity.LBRarity;
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -39,5 +41,10 @@ public class LBItemEntity {
 
     public boolean isCommon(){
         return this.rarity.absoluteOrdinal() == 0;
+    }
+
+    public boolean isRare(){
+        Integer min = ConfigurationManager.<Integer>request(Config.SOUND_ORDINAL_MIN);
+        return this.rarity.absoluteOrdinal() >= min;
     }
 }

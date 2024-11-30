@@ -81,6 +81,7 @@ public class Configuration implements IConfigurationProvider {
 	public static ForgeConfigSpec.ConfigValue<List<String>> SOUND_ONLY_WHITELIST;
 	public static ForgeConfigSpec.ConfigValue<List<String>> SOUND_ONLY_BLACKLIST;
 	public static ForgeConfigSpec.BooleanValue SOUND_ALL_ITEMS;
+	public static ForgeConfigSpec.IntValue SOUND_ORDINAL_MIN;
 
 	public static ForgeConfigSpec.BooleanValue ENABLE_DYNAMIC_PROVIDER;
 	public static ForgeConfigSpec.IntValue HALF_ROUND_TICKS;
@@ -283,6 +284,9 @@ public class Configuration implements IConfigurationProvider {
 
 		SOUND_ONLY_BLACKLIST = clientBuilder.comment("Registry names of items that sounds should NOT play on. This has priority over everything. You can also specify modids for a whole mod's items.").define("sound_blacklist", new ArrayList<>());
 
+		SOUND_ORDINAL_MIN = clientBuilder.defineInRange("sound_ordinal_min", 3, 0, 100);
+
+
 
 		clientBuilder.pop();
 		clientBuilder.comment("Dynamic").push("Dynamic");
@@ -362,5 +366,6 @@ public class Configuration implements IConfigurationProvider {
 		ConfigurationManager.insert(Config.ENABLE_DYNAMIC_PROVIDER, () -> ENABLE_DYNAMIC_PROVIDER.get());
 		ConfigurationManager.insert(Config.HALF_ROUND_TICKS, () -> HALF_ROUND_TICKS.get());
 		ConfigurationManager.insert(Config.BEAM_FADE_IN_TIME, () -> BEAM_FADE_IN_TIME.get());
+		ConfigurationManager.insert(Config.SOUND_ORDINAL_MIN, () -> SOUND_ORDINAL_MIN.get());
 	}
 }

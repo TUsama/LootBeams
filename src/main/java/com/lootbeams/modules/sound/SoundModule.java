@@ -31,8 +31,9 @@ public class SoundModule implements ILBModule {
 
         if ((ConfigurationManager.<Boolean>request(Config.SOUND_ALL_ITEMS) && !Checker.isItemInRegistryList(ConfigurationManager.request(Config.BLACKLIST), item))
                 || (Configuration.SOUND_ONLY_EQUIPMENT.get() && Checker.isEquipmentItem(item))
-                || (Configuration.SOUND_ONLY_RARE.get() && event.LBItemEntity.rarity().absoluteOrdinal() != 0)
-                || Checker.isItemInRegistryList(Configuration.SOUND_ONLY_WHITELIST.get(), item)) {
+                || (Configuration.SOUND_ONLY_RARE.get() && event.LBItemEntity.isRare())
+                || Checker.isItemInRegistryList(Configuration.SOUND_ONLY_WHITELIST.get(), item)
+        ) {
 
             WeighedSoundEvents sound = Minecraft.getInstance().getSoundManager().getSoundEvent(LootBeams.LOOT_DROP);
 

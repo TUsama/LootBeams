@@ -125,7 +125,7 @@ public class NameTagRenderer {
 
     private static void renderText(Font fontRenderer, PoseStack stack, MultiBufferSource buffer, String text, int foregroundColor, int backgroundColor, float backgroundAlpha) {
 
-        if (Configuration.BORDERS.get()) {
+        if (ConfigurationManager.<Boolean>request(Config.BORDERS)) {
             float w = -fontRenderer.width(text) / 2f;
             int bg = new Color(0, 0, 0, (int) (255 * backgroundAlpha)).getRGB();
             Component comp = Component.literal(text);
