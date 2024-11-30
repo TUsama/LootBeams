@@ -32,7 +32,7 @@ public class MineAndSlashCompatModule implements ILBCompatModule {
     @Override
     public void tryEnable() {
         if (shouldBeEnable()) {
-            LootBeams.LOGGER.info("Detected Mine and Slash, enable compat module!");
+            LootBeams.LOGGER.info("Detected Mine and Slash, enable MineAndSlashCompatModule!");
             LootBeams.EVENT_BUS.register(new MineAndSlashCompatModule());
             rarities.add("common");
             rarities.add("uncommon");

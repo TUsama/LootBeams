@@ -29,9 +29,6 @@ public class NameTagRenderer {
 
     public static void renderNameTag(PoseStack stack, MultiBufferSource buffer, LBItemEntity LBItemEntity) {
         ItemEntity item = LBItemEntity.item();
-
-        DynamicHolder<LootRarity> rarity = GemInstance.unsocketed(item.getItem()).rarity();
-        //System.out.println(rarity.isBound());
         if (Minecraft.getInstance().player.isCrouching() || ((((Boolean) ConfigurationManager.request(Config.RENDER_NAMETAGS_ONLOOK)) && isLookingAt(Minecraft.getInstance().player, item, Configuration.NAMETAG_LOOK_SENSITIVITY.get())))) {
 
             Color color = LBItemEntity.rarity().color();
