@@ -6,11 +6,11 @@ modId = "lootbeams"
 version = "1.20.1"
 logoFile = "banner.png"
 authors = "Clefal"
-displayName = "LootBeams:Refork"
+displayName = "LootBeams: Refork"
 displayTest="IGNORE_ALL_VERSION"
-displayURL = "https://www.curseforge.com/minecraft/mc-mods/loot-beams"
+displayURL = "https://www.curseforge.com/minecraft/mc-mods/loot-beams-refork"
 description = '''
-Renders highly configurable colored beams on dropped items!
+Loot items, guided by light!
 '''
 [[dependencies.lootbeams]]
 modId = "forge"
