@@ -34,7 +34,7 @@ public class BeamRenderer {
     private static final Random RANDOM = new Random();
 
 
-    public static void renderLootBeam(PoseStack stack, MultiBufferSource buffer, float pticks, LBItemEntity LBItemEntity, Quaternionf quaternionf) {
+    public static void renderLootBeam(PoseStack stack, MultiBufferSource buffer, float partialTick, LBItemEntity LBItemEntity) {
         ItemEntity itemEntity = LBItemEntity.item();
 
         Color color = LBItemEntity.rarity().color();
@@ -81,12 +81,11 @@ public class BeamRenderer {
         beamAlpha *= fadeInFactor;
 
         stack.pushPose();
-        stack.mulPose(quaternionf);
+        stack.mulPose(Minecraft.getInstance().getEntityRenderDispatcher().cameraOrientation());
         //Render main beam
         {
             stack.pushPose();
-            stack.translate(0, yOffset, 0);
-            stack.translate(0, 1, 0);
+            stack.translate(0, yOffset + 1, 0);
             VertexConsumer buffer1 = buffer.getBuffer(BeamRenderType.LOOT_BEAM_RENDERTYPE);
 
             //beam
@@ -129,7 +128,6 @@ public class BeamRenderer {
                 stack.popPose();
             }
 
-            //TooltipRenderer.renderNameTag(stack, buffer, itemEntity, Color.BLACK);
             /*
             if (Configuration.PARTICLES.get()) {
                 if (!Configuration.PARTICLE_RARE_ONLY.get()) {
