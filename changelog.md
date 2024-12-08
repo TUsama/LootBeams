@@ -1,3 +1,8 @@
+### V2.1.1
+fix an issue when legendary tooltips is installed
+fix a crash when mod try to wrap MNS's GearRarity to LBRarity.
+
+
 ### V2.1.0
 re-implement the tooltips module.
 

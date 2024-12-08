@@ -1,16 +1,15 @@
 package com.clefal.lootbeams.modules.compat.mine_and_slash;
 
 import com.clefal.lootbeams.LootBeams;
-import com.clefal.lootbeams.events.RegisterLBRarityEvent;
-import com.clefal.lootbeams.modules.compat.ILBCompatModule;
 import com.clefal.lootbeams.data.LBItemEntity;
 import com.clefal.lootbeams.data.rarity.LBRarity;
+import com.clefal.lootbeams.events.RegisterLBRarityEvent;
+import com.clefal.lootbeams.modules.compat.ILBCompatModule;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import com.robertx22.mine_and_slash.uncommon.datasaving.StackSaving;
 import io.vavr.control.Option;
 import net.minecraftforge.fml.ModList;
 import net.neoforged.bus.api.SubscribeEvent;
-
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -51,14 +50,16 @@ public class MineAndSlashCompatModule implements ILBCompatModule {
 
                 Match(Match(itemEntity.getItem()).option(
                         //ItemEntity -> GearRarity
-                Case($(stack -> StackSaving.GEARS.has(stack)), stack -> StackSaving.GEARS.loadFrom(stack).getRarity())
-        )).of(
-                //GearRarity -> LBRarity
-                Case($(option -> !option.isEmpty()), option -> Option.some(LBItemEntity.of(itemEntity, LBRarity.of(
-                        option.get().locName(),
-                        new Color(option.get().textFormatting().getColor()),
-                        rarities.indexOf(option.get().guid)
-                ))))
-        ));
+                        Case($(stack -> StackSaving.GEARS.has(stack)), stack -> StackSaving.GEARS.loadFrom(stack).getRarity())
+                )).of(
+                        //GearRarity -> LBRarity
+                        Case($(option -> !option.isEmpty()), option -> Option.some(LBItemEntity.of(itemEntity, LBRarity.of(
+                                option.get().locName(),
+                                new Color(option.get().textFormatting().getColor()),
+                                rarities.indexOf(option.get().guid)
+                        )))),
+                        Case($(), Option::none)
+
+                ));
     }
 }

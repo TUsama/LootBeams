@@ -1,15 +1,19 @@
 package com.clefal.lootbeams.config.impl;
 
+import com.anthonyhilyard.legendarytooltips.LegendaryTooltips;
+import com.anthonyhilyard.legendarytooltips.Loader;
 import com.clefal.lootbeams.config.Config;
 import com.clefal.lootbeams.config.ConfigurationManager;
 import com.clefal.lootbeams.data.LBItemEntity;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import io.vavr.Function1;
 import io.vavr.collection.Vector;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraftforge.fml.ModList;
 
 import java.util.List;
 import java.util.Map;
@@ -21,7 +25,7 @@ public class TooltipsEnableStatus {
     public static final Function1<LBItemEntity, Component> handleName = lbItemEntity -> {
         Boolean ifShowStack = ConfigurationManager.<Boolean>request(Config.RENDER_STACKCOUNT);
         ItemStack item = lbItemEntity.item().getItem();
-        if (!ifShowStack) return item.getHoverName();
+        if (!ifShowStack) return item.getHoverName().plainCopy();
         int count = item.getCount();
         if (count > 1){
             return item.getHoverName().plainCopy().append(" x" + count);
@@ -58,10 +62,17 @@ public class TooltipsEnableStatus {
         public static List<Component> safeGetNameAndRarity(LBItemEntity lbItemEntity){
             TooltipsStatus status = ConfigurationManager.request(Config.ENABLE_TOOLTIPS);
             Map<String, Vector<Component>> map = status.extractComponents.apply(lbItemEntity);
+            //System.out.println(lbItemEntity.item().getItem().getHoverName());
             return switch (status) {
                 case ONLY_NAME -> ImmutableList.of(map.get(NAME).get());
-                case NAME_AND_RARITY,NAME_RARITY_TOOLTIPS -> ImmutableList.of(map.get(NAME).get(),
-                        map.get(RARITY).get());
+                case NAME_AND_RARITY, NAME_RARITY_TOOLTIPS -> {
+                    if (ModList.get().isLoaded(Loader.MODID)) {
+                        yield ImmutableList.of(map.get(NAME).get());
+                    } else {
+                        yield ImmutableList.of(map.get(NAME).get(),
+                                map.get(RARITY).get());
+                    }
+                }
                 default -> ImmutableList.of();
             };
         }

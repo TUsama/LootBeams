@@ -2,7 +2,7 @@
   "required": true,
   "minVersion": "0.8",
   "package": "com.clefal.lootbeams.mixin",
-  "compatibilityLevel": "JAVA_8",
+  "compatibilityLevel": "JAVA_17",
   "refmap": "lootbeams.refmap.json",
   "mixins": [
   ],

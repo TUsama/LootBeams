@@ -11,6 +11,9 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextColor;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -111,7 +114,8 @@ public class AdvanceTooltipOverlay {
         if (checkCrouch()) {
             guiGraphics.renderTooltip(Minecraft.getInstance().font, itemEntity.getItem(), (int) vector2f.x, (int) vector2f.y);
         } else {
-            List<Component> nameAndRarity = TooltipsEnableStatus.TooltipsStatus.safeGetNameAndRarity(ask);
+            List<Component> nameAndRarity = TooltipsEnableStatus.TooltipsStatus.safeGetNameAndRarity(ask).stream().map(x -> (Component)x.plainCopy().withStyle(Style.EMPTY.withColor(TextColor.fromRgb(ask.rarity().color().getRGB())))).toList();
+
             guiGraphics.renderTooltip(Minecraft.getInstance().font, nameAndRarity, itemEntity.getItem().getTooltipImage(), itemEntity.getItem(), (int) vector2f.x, (int) vector2f.y);
         }
 
