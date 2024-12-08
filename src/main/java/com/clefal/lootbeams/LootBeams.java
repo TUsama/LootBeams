@@ -26,14 +26,17 @@ public class LootBeams {
 
 	public LootBeams() {
 
-		ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class, () -> new IExtensionPoint.DisplayTest(() -> NetworkConstants.IGNORESERVERONLY, (a, b) -> true));
+		getModLoadingContext().registerExtensionPoint(IExtensionPoint.DisplayTest.class, () -> new IExtensionPoint.DisplayTest(() -> NetworkConstants.IGNORESERVERONLY, (a, b) -> true));
 
-		ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, Configuration.CLIENT_CONFIG);
+		getModLoadingContext().registerConfig(ModConfig.Type.CLIENT, Configuration.CLIENT_CONFIG);
 
 		//FMLJavaModLoadingContext.get().getModEventBus().addListener(com.lootbeams.ClientSetup::init);
 
 
 	}
 
+	public static ModLoadingContext getModLoadingContext(){
+		return ModLoadingContext.get();
+	}
 
 }
