@@ -3,5 +3,6 @@
   "lootbeams.vanilla_rarity.common": "普通",
   "lootbeams.vanilla_rarity.uncommon": "少见",
   "lootbeams.vanilla_rarity.rare": "稀有",
-  "lootbeams.vanilla_rarity.epic": "史诗"
+  "lootbeams.vanilla_rarity.epic": "史诗",
+  "lootbeams.mod_rarity.non_soul": "缺少灵魂"
 }

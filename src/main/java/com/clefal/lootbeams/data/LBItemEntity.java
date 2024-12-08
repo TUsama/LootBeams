@@ -40,7 +40,7 @@ public class LBItemEntity {
     }
 
     public boolean isCommon(){
-        return this.rarity.absoluteOrdinal() == 0;
+        return this.rarity.absoluteOrdinal() <= 0;
     }
 
     public boolean isRare(){
