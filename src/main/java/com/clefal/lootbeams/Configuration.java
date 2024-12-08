@@ -3,6 +3,7 @@ package com.clefal.lootbeams;
 import com.clefal.lootbeams.config.Config;
 import com.clefal.lootbeams.config.ConfigurationManager;
 import com.clefal.lootbeams.config.IConfigurationProvider;
+import com.clefal.lootbeams.config.impl.TooltipsEnableStatus;
 import com.clefal.lootbeams.data.rarity.ConfigCustomRarity;
 import com.clefal.lootbeams.data.rarity.Order;
 import net.minecraftforge.common.ForgeConfigSpec;
@@ -41,7 +42,7 @@ public class Configuration implements IConfigurationProvider {
 
 	public static ForgeConfigSpec.BooleanValue PARTICLES;
 
-	public static ForgeConfigSpec.EnumValue<Config.TooltipsStatus> ENABLE_TOOLTIPS;
+	public static ForgeConfigSpec.EnumValue<TooltipsEnableStatus.TooltipsStatus> ENABLE_TOOLTIPS;
 	public static ForgeConfigSpec.BooleanValue BORDERS;
 	public static ForgeConfigSpec.BooleanValue RENDER_NAMETAGS;
 	public static ForgeConfigSpec.BooleanValue RENDER_NAMETAGS_ONLOOK;
@@ -52,7 +53,7 @@ public class Configuration implements IConfigurationProvider {
 	public static ForgeConfigSpec.DoubleValue NAMETAG_SCALE;
 	public static ForgeConfigSpec.DoubleValue NAMETAG_Y_OFFSET;
 	public static ForgeConfigSpec.ConfigValue<List<String>> CUSTOM_RARITIES;
-
+	public static ForgeConfigSpec.BooleanValue SCREEN_TOOLTIPS_REQUIRE_CROUCH;
 
 
 
@@ -86,6 +87,9 @@ public class Configuration implements IConfigurationProvider {
 	public static ForgeConfigSpec.BooleanValue ENABLE_DYNAMIC_PROVIDER;
 	public static ForgeConfigSpec.IntValue HALF_ROUND_TICKS;
 	public static ForgeConfigSpec.IntValue BEAM_FADE_IN_TIME;
+
+
+
 
 
 	static {
@@ -219,10 +223,11 @@ public class Configuration implements IConfigurationProvider {
 
 
 
-		clientBuilder.comment("Item nametags").push("Nametags");
+		clientBuilder.comment("Item Tooltips").push("Tooltips");
 
-		ENABLE_TOOLTIPS = clientBuilder.comment("If tooltips feature should be enabled.").defineEnum("enable_tooltips", Config.TooltipsStatus.NAME_AND_RARITY);
+		ENABLE_TOOLTIPS = clientBuilder.comment("If tooltips feature should be enabled.").defineEnum("enable_tooltips", TooltipsEnableStatus.TooltipsStatus.NAME_AND_RARITY);
 
+		SCREEN_TOOLTIPS_REQUIRE_CROUCH = clientBuilder.comment("if tooltips should be rendered only when player is crouching").define("screen_tooltips_require_crouch", true);
 
 
 		BORDERS = clientBuilder.comment("Render nametags as bordered. Set to false for flat nametag with background.").define("borders", true);
@@ -367,5 +372,6 @@ public class Configuration implements IConfigurationProvider {
 		ConfigurationManager.insert(Config.HALF_ROUND_TICKS, () -> HALF_ROUND_TICKS.get());
 		ConfigurationManager.insert(Config.BEAM_FADE_IN_TIME, () -> BEAM_FADE_IN_TIME.get());
 		ConfigurationManager.insert(Config.SOUND_ORDINAL_MIN, () -> SOUND_ORDINAL_MIN.get());
+		ConfigurationManager.insert(Config.SCREEN_TOOLTIPS_REQUIRE_CROUCH, () -> SCREEN_TOOLTIPS_REQUIRE_CROUCH.get());
 	}
 }

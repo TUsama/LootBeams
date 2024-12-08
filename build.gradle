@@ -123,6 +123,10 @@ repositories {
         }
     }
     maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+    maven {
+        name = 'BlameJared Maven (CrT / Bookshelf)'
+        url = 'https://maven.blamejared.com'
+    }
 }
 configurations {
     shade.extendsFrom(minecraftLibrary)
@@ -163,7 +167,6 @@ dependencies {
         exclude group: "org.apache.logging.log4j"
         exclude group: "cpw.mods", module: "modlauncher"
     }
-
 
 
 }

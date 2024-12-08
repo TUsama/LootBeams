@@ -85,22 +85,15 @@ public enum Config {
 
 
     ENABLE_DYNAMIC_PROVIDER(Boolean.class),
-    HALF_ROUND_TICKS(Integer.class);
+    HALF_ROUND_TICKS(Integer.class),
 
+
+    SCREEN_TOOLTIPS_REQUIRE_CROUCH(Boolean.class);
+    //used to notice me which type the config is.
     private final Class<?> type;
 
     Config(Class<?> type) {
         this.type = type;
     }
 
-    public Class<?> getType() {
-        return type;
-    }
-
-    public enum TooltipsStatus {
-        NONE,
-        ONLY_NAME,
-        NAME_AND_RARITY,
-        NAME_RARITY_TOOLTIPS;
-    }
 }

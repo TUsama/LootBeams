@@ -3,8 +3,10 @@ package com.clefal.lootbeams.modules.tooltip.nametag;
 import com.clefal.lootbeams.Configuration;
 import com.clefal.lootbeams.config.Config;
 import com.clefal.lootbeams.config.ConfigurationManager;
+import com.clefal.lootbeams.config.impl.TooltipsEnableStatus;
 import com.clefal.lootbeams.data.LBItemEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
+import io.vavr.collection.Vector;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.player.LocalPlayer;
@@ -29,40 +31,13 @@ public class NameTagRenderer {
         if (Minecraft.getInstance().player.isCrouching() || ((((Boolean) ConfigurationManager.request(Config.RENDER_NAMETAGS_ONLOOK)) && isLookingAt(Minecraft.getInstance().player, item, Configuration.NAMETAG_LOOK_SENSITIVITY.get())))) {
 
             Color color = LBItemEntity.rarity().color();
-            int rgb = color.getRGB();
-/*
-            {
-                stack.pushPose();
-                stack.mulPose(camera);
-                {
-                    //Render nametags at heights based on player distance
-                    VertexConsumer buffer1 = buffer.getBuffer(TooltipRenderType.TOOLTIPS_BACKGROUND);
-                    float nametagScale = ((Double) ConfigurationManager.request(Config.NAMETAG_SCALE)).floatValue();
-                    stack.scale(-0.02F * nametagScale, -0.02F * nametagScale, 0.02F * nametagScale);
-
-                    //Render stack counts on nametag
-                    Font fontrenderer = Minecraft.getInstance().font;
-                    String itemName = StringUtil.stripColor(item.getItem().getHoverName().getString());
-                    if (Configuration.RENDER_STACKCOUNT.get()) {
-                        int count = item.getItem().getCount();
-                        if (count > 1) {
-                            itemName = itemName + " x" + count;
-                        }
-                    }
-
-                }
-
-
-                stack.popPose();
-            }*/
-
 
             //If player is crouching or looking at the item
-            if (Minecraft.getInstance().player.isCrouching() || (Configuration.RENDER_NAMETAGS_ONLOOK.get() && isLookingAt(Minecraft.getInstance().player, item, ConfigurationManager.request(Config.NAMETAG_LOOK_SENSITIVITY)))) {
+            if (Minecraft.getInstance().player.isCrouching() || (ConfigurationManager.<Boolean>request(Config.RENDER_NAMETAGS_ONLOOK) && isLookingAt(Minecraft.getInstance().player, item, ConfigurationManager.request(Config.NAMETAG_LOOK_SENSITIVITY)))) {
                 float foregroundAlpha = ConfigurationManager.request(Double.class, Config.NAMETAG_TEXT_ALPHA).floatValue();
                 float backgroundAlpha = ConfigurationManager.request(Double.class, Config.NAMETAG_BACKGROUND_ALPHA).floatValue();
                 double yOffset = ConfigurationManager.request(Double.class, Config.NAMETAG_Y_OFFSET);
-                int foregroundColor = rgb;
+                int foregroundColor = new Color(color.getRed(), color.getGreen(), color.getBlue(), (int) (255 * foregroundAlpha)).getRGB();
                 int backgroundColor = new Color(color.getRed(), color.getGreen(), color.getBlue(), (int) (255 * backgroundAlpha)).getRGB();
                 stack.pushPose();
 
@@ -75,22 +50,11 @@ public class NameTagRenderer {
 
                 //Render stack counts on nametag
                 Font fontrenderer = Minecraft.getInstance().font;
-                List<Component> components = new ArrayList<>();
-                Component name = item.getItem().getHoverName();
-                Component rarityName = LBItemEntity.rarity().name();
-                if (Boolean.TRUE.equals(ConfigurationManager.<Boolean>request(Config.RENDER_STACKCOUNT))) {
-                    int count = item.getItem().getCount();
-                    if (count > 1) {
-                        name = name.plainCopy().append(" x" + count);
-                    }
-                }
-                components.add(name);
-                components.add(rarityName);
-
+                var list = TooltipsEnableStatus.TooltipsStatus.safeGetNameAndRarity(LBItemEntity);
 
                 stack.translate(0, 2, -10);
 
-                for (Component c : components) {
+                for (Component c : list) {
                     String s = c.getString();
                     if (s.isBlank()) continue;
                     renderText(fontrenderer, stack, buffer, s, foregroundColor, backgroundColor, backgroundAlpha);
@@ -100,19 +64,6 @@ public class NameTagRenderer {
 
 
                 stack.popPose();
-                //Move closer to the player so we dont render in beam, and render the tag
-
-
-/*
-                //Render small tags
-                stack.translate(0.0D, 10, 0.0D);
-                stack.scale(0.75f, 0.75f, 0.75f);
-                boolean textDrawn = false;
-                List<Component> tooltip;
-
-                Either<Boolean, List<Component>> ask1 = NameTagCache.ask(item);
-                if (ask1.right().isEmpty()) return;
-                List<Component> right = ask1.right().get();*/
 
 
             }

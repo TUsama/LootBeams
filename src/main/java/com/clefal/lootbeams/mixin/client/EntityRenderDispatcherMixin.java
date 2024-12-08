@@ -13,7 +13,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(EntityRenderDispatcher.class)
 public abstract class EntityRenderDispatcherMixin {
 
-
+    /**
+     * From Neat
+     *
+     */
     @Inject(
             method = "render", at = @At(
             value = "INVOKE",
@@ -22,7 +25,7 @@ public abstract class EntityRenderDispatcherMixin {
     )
     )
     private void lootBeamHook(Entity entity, double worldX, double worldY, double worldZ, float entityYRot, float partialTicks, PoseStack poseStack, MultiBufferSource buffers, int light, CallbackInfo ci) {
-      Hooker.lootBeamHook(entity, worldX, worldY, worldZ, entityYRot, partialTicks, poseStack, buffers, light, ci);
+      Hooker.lootBeamEntityDispatcherHook(entity, worldX, worldY, worldZ, entityYRot, partialTicks, poseStack, buffers, light, ci);
     }
 
 

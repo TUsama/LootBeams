@@ -30,6 +30,7 @@ import net.minecraftforge.event.entity.EntityLeaveLevelEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
@@ -54,7 +55,7 @@ public class ClientSetup {
 	@SubscribeEvent
 	public static void onHudRender(RenderGuiOverlayEvent.Post event) {
 
-
+/*
 		if(event.getOverlay().equals(VanillaGuiOverlay.CROSSHAIR.type())){
 			if(Configuration.ADVANCED_TOOLTIPS.get() && (Minecraft.getInstance().screen == null || Minecraft.getInstance().screen instanceof ChatScreen)) {
 				Player player = Minecraft.getInstance().player;
@@ -74,7 +75,16 @@ public class ClientSetup {
 											(Screen.getTooltipFromItem(Minecraft.getInstance(), itemEntity.getItem()).size())/100f,
 									0);
 							Vector3f desiredScreenSpacePos = worldToScreenSpace(tooltipWorldPos, event.getPartialTick());
-							desiredScreenSpacePos = new Vector3f(Mth.clamp(desiredScreenSpacePos.x(), 0, event.getWindow().getGuiScaledWidth()), Mth.clamp(desiredScreenSpacePos.y(), 0, event.getWindow().getGuiScaledHeight() - (Minecraft.getInstance().font.lineHeight * Screen.getTooltipFromItem(Minecraft.getInstance(), itemEntity.getItem()).size())), desiredScreenSpacePos.z());
+
+							desiredScreenSpacePos = new Vector3f(Mth.clamp(
+									desiredScreenSpacePos.x(),
+									0,
+									event.getWindow().getGuiScaledWidth()),
+									Mth.clamp(
+											desiredScreenSpacePos.y(),
+											0,
+											event.getWindow().getGuiScaledHeight() - (Minecraft.getInstance().font.lineHeight * Screen.getTooltipFromItem(Minecraft.getInstance(), itemEntity.getItem()).size())),
+									desiredScreenSpacePos.z());
 							Component longestLine =
 									tooltipLines.stream().max((a, b) -> Minecraft.getInstance().font.width(a) - Minecraft.getInstance().font.width(b))
 											.orElse(Screen.getTooltipFromItem(Minecraft.getInstance(), itemEntity.getItem()).get(0));
@@ -107,71 +117,11 @@ public class ClientSetup {
 					}
 				}
 			}
-		}
+		}*/
 	}
 
-	public static Vector3f worldToScreenSpace(Vec3 pos, float partialTicks) {
-		Minecraft mc = Minecraft.getInstance();
-		Camera camera = mc.gameRenderer.getMainCamera();
-		Vec3 cameraPosition = camera.getPosition();
 
-		Vector3f position = new Vector3f((float) (cameraPosition.x - pos.x), (float) (cameraPosition.y - pos.y), (float) (cameraPosition.z - pos.z));
-		Quaternionf cameraRotation = camera.rotation();
-		cameraRotation.conjugate();
-		//cameraRotation = restrictAxis(new Vec3(1, 1, 0), cameraRotation);
-		cameraRotation.transform(position);
 
-		// Account for view bobbing
-		if (mc.options.bobView.get() && mc.getCameraEntity() instanceof Player) {
-			Player player = (Player) mc.getCameraEntity();
-			float playerStep = player.walkDist - player.walkDistO;
-			float stepSize = -(player.walkDist + playerStep * partialTicks);
-			float viewBob = Mth.lerp(partialTicks, player.oBob, player.bob);
-
-			Quaternionf bobXRotation = Axis.XP.rotationDegrees(Math.abs(Mth.cos(stepSize * (float) Math.PI - 0.2f) * viewBob) * 5f);
-			Quaternionf bobZRotation = Axis.ZP.rotationDegrees(Mth.sin(stepSize * (float) Math.PI) * viewBob * 3f);
-			bobXRotation.conjugate();
-			bobZRotation.conjugate();
-			bobXRotation.transform(position);
-			bobZRotation.transform(position);
-			position.add(Mth.sin(stepSize * (float) Math.PI) * viewBob * 0.5f, Math.abs(Mth.cos(stepSize * (float) Math.PI) * viewBob), 0f);
-		}
-
-		Window window = mc.getWindow();
-		float screenSize = window.getGuiScaledHeight() / 2f / position.z() / (float) Math.tan(Math.toRadians(mc.gameRenderer.getFov(camera, partialTicks, true) / 2f));
-		position.mul(-screenSize, -screenSize, 1f);
-		position.add(window.getGuiScaledWidth() / 2f, window.getGuiScaledHeight() / 2f, 0f);
-
-		return position;
-	}
-
-	public static HitResult getEntityItem(Player player) {
-		Minecraft mc = Minecraft.getInstance();
-		double distance = player.getBlockReach();
-		float partialTicks = mc.getDeltaFrameTime();
-		Vec3 position = player.getEyePosition(partialTicks);
-		Vec3 view = player.getViewVector(partialTicks);
-		if (mc.hitResult != null && mc.hitResult.getType() != HitResult.Type.MISS)
-			distance = mc.hitResult.getLocation().distanceTo(position);
-		return getEntityItem(player, position, position.add(view.x * distance, view.y * distance, view.z * distance));
-
-	}
-	public static HitResult getEntityItem(Player player, Vec3 position, Vec3 look) {
-		Vec3 include = look.subtract(position);
-		List list = player.level().getEntities(player, player.getBoundingBox().expandTowards(include.x, include.y, include.z));
-		for (int i = 0; i < list.size(); ++i) {
-			Entity entity = (Entity) list.get(i);
-			if (entity instanceof ItemEntity) {
-				AABB axisalignedbb = entity.getBoundingBox().inflate(0.5).inflate(0.0,0.5,0.0);
-				Optional<Vec3> vec = axisalignedbb.clip(position, look);
-				if (vec.isPresent())
-					return new EntityHitResult(entity, vec.get());
-				else if (axisalignedbb.contains(position))
-					return new EntityHitResult(entity);
-			}
-		}
-		return null;
-	}
 
 	public static void onItemCreation(EntityJoinLevelEvent event){
 		if (event.getEntity() instanceof ItemEntity ie) {

@@ -20,8 +20,7 @@ import java.util.stream.Collectors;
 public class ConfigCustomRarity extends ModifyingConfigHandler {
     public final static String langKeyFormat = "lootbeams.fake_rarity.";
     private final Set<ResourceLocation> customRarity;
-    private final Config.TooltipsStatus request = ConfigurationManager.request(Config.ENABLE_TOOLTIPS);
-    private final Boolean showAmount = ConfigurationManager.request(Boolean.class, Config.RENDER_STACKCOUNT);
+
 
     public ConfigCustomRarity() {
         this.customRarity = ConfigurationManager.<List<String>>request(Config.CUSTOM_RARITIES)
