@@ -7,6 +7,7 @@ import com.clefal.lootbeams.config.ConfigurationManager;
 import com.clefal.lootbeams.data.LBItemEntity;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.obscuria.tooltips.ObscureTooltips;
 import com.robertx22.mine_and_slash.mmorpg.SlashRef;
 import io.vavr.Function1;
 import io.vavr.collection.Vector;
@@ -66,7 +67,7 @@ public class TooltipsEnableStatus {
             return switch (status) {
                 case ONLY_NAME -> ImmutableList.of(map.get(NAME).get());
                 case NAME_AND_RARITY, NAME_RARITY_TOOLTIPS -> {
-                    if (ModList.get().isLoaded(Loader.MODID)) {
+                    if (ModList.get().isLoaded(ObscureTooltips.MODID)) {
                         yield ImmutableList.of(map.get(NAME).get());
                     } else {
                         yield ImmutableList.of(map.get(NAME).get(),
@@ -85,5 +86,7 @@ public class TooltipsEnableStatus {
                 default -> Vector.of();
             };
         }
+
+
     }
 }
