@@ -1,3 +1,7 @@
+### V2.1.0
+re-implement the tooltips module.
+
+
 ### V2.0.0
 1. Completely refactor the code, including 
     * Loot Beam:

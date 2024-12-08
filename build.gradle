@@ -3,6 +3,7 @@ plugins {
     id 'org.spongepowered.mixin' version '0.7.+'
     id 'org.parchmentmc.librarian.forgegradle' version '1.+'
     id 'com.github.johnrengelman.shadow' version '7.1.1'
+    id "me.modmuss50.mod-publish-plugin" version "0.8.1"
 }
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
@@ -214,6 +215,20 @@ assemble.dependsOn shadowJar
 
 reobf {
     shadowJar {}
+}
+
+
+publishMods {
+    file = jar.archiveFile
+    changelog = file("changelog.md").text
+    type = STABLE
+    modLoaders.add("forge")
+    curseforge {
+        accessToken = file("D:\\curseforge-key.txt").text
+        projectId = "1150640"
+        clientRequired = true
+        minecraftVersions.add("1.20.1")
+    }
 }
 
 
