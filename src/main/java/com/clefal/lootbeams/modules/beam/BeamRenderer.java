@@ -1,12 +1,8 @@
 package com.clefal.lootbeams.modules.beam;
 
-import com.clefal.lootbeams.Configuration;
-import com.clefal.lootbeams.LootBeamsModClientEvent;
-import com.clefal.lootbeams.modules.compat.apothesis.ApotheosisCompat;
 import com.clefal.lootbeams.config.Config;
 import com.clefal.lootbeams.config.ConfigurationManager;
 import com.clefal.lootbeams.data.LBItemEntity;
-import com.clefal.lootbeams.modules.beam.vfx.VFXParticle;
 import com.clefal.lootbeams.modules.dynamicprovider.DynamicProvider;
 import com.clefal.lootbeams.modules.dynamicprovider.DynamicProviderModule;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -15,11 +11,7 @@ import io.vavr.control.Option;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.item.Rarity;
-import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.fml.ModList;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 
@@ -29,8 +21,7 @@ import java.util.List;
 import java.util.Random;
 
 public class BeamRenderer {
-    public static final List<ItemEntity> LIGHT_CACHE = new ArrayList<>();
-    private static final Random RANDOM = new Random();
+
 
 
     public static void renderLootBeam(PoseStack stack, MultiBufferSource buffer, float partialTick, LBItemEntity LBItemEntity) {
@@ -141,7 +132,7 @@ public class BeamRenderer {
 
             }*/
         }
-        if (lifeTime < fadeInTime){
+        if (lifeTime < fadeInTime) {
             LBItemEntity.updateLife();
         }
 
@@ -155,53 +146,6 @@ public class BeamRenderer {
 
     }
 
-    public static boolean compatRarityCheck(ItemEntity item, boolean shouldRender) {
-        if (ModList.get().isLoaded("apotheosis")) {
-            if (ApotheosisCompat.isApotheosisItem(item.getItem())) {
-                shouldRender = !ApotheosisCompat.getRarityName(item.getItem()).contains("apotheosis:common") || item.getItem().getRarity() != Rarity.COMMON;
-            } else if (item.getItem().getRarity() != Rarity.COMMON) {
-                shouldRender = true;
-            }
-        } else {
-            if (item.getItem().getRarity() != Rarity.COMMON) {
-                shouldRender = true;
-            }
-        }
-        return shouldRender;
-    }
-
-    private static void renderParticles(float pticks, ItemEntity item, int entityTime, float r, float g, float b) {
-        float particleCount = Math.abs(20 - Configuration.PARTICLE_COUNT.get().floatValue());
-        if (entityTime % particleCount == 0 && pticks < 0.3f && !Minecraft.getInstance().isPaused()) {
-            Vec3 randomDir = new Vec3(RANDOM.nextDouble(-Configuration.PARTICLE_SPEED.get() / 2.0f, Configuration.PARTICLE_SPEED.get() / 5.0f),
-                    RANDOM.nextDouble(Configuration.PARTICLE_SPEED.get() / 2f, Configuration.PARTICLE_SPEED.get()),
-                    RANDOM.nextDouble(-Configuration.PARTICLE_SPEED.get() / 2.0f, Configuration.PARTICLE_SPEED.get() / 2.0f))
-                    .multiply(
-                            Configuration.RANDOMNESS_INTENSITY.get(),
-                            Configuration.RANDOMNESS_INTENSITY.get(),
-                            Configuration.RANDOMNESS_INTENSITY.get()
-                    );
-            Vec3 particleDir = new Vec3(
-                    Configuration.PARTICLE_DIRECTION_X.get(),
-                    Configuration.PARTICLE_DIRECTION_Y.get(),
-                    Configuration.PARTICLE_DIRECTION_Z.get()
-            ).multiply(randomDir);
-            addParticle(LootBeamsModClientEvent.GLOW_TEXTURE, r, g, b, 1.0f, Configuration.PARTICLE_LIFETIME.get(), RANDOM.nextFloat((float) (0.25f * Configuration.PARTICLE_SIZE.get()), (float) (1.1f * Configuration.PARTICLE_SIZE.get())), new Vec3(
-                    RANDOM.nextDouble(item.getX() - Configuration.PARTICLE_RADIUS.get(), item.getX() + Configuration.PARTICLE_RADIUS.get()),
-                    RANDOM.nextDouble(item.getY() - (Configuration.PARTICLE_RADIUS.get() / 3f), item.getY() + (Configuration.PARTICLE_RADIUS.get() / 3f)),
-                    RANDOM.nextDouble(item.getZ() - Configuration.PARTICLE_RADIUS.get(), item.getZ() + Configuration.PARTICLE_RADIUS.get())), particleDir, item.position());
-        }
-    }
-
-
-    private static void addParticle(ResourceLocation spriteLocation, float red, float green, float blue, float alpha, int lifetime, float size, Vec3 pos, Vec3 motion, Vec3 sourcePos) {
-        Minecraft mc = Minecraft.getInstance();
-        //make the particle brighter
-        alpha *= 1.5f;
-        VFXParticle provider = new VFXParticle(mc.level, mc.particleEngine.textureAtlas.getSprite(spriteLocation), red, green, blue, alpha, lifetime, size, pos, motion, 0, false, true);
-        provider.setParticleCenter(sourcePos);
-        mc.particleEngine.add(provider);
-    }
 
     private static void renderGlow(PoseStack stack, VertexConsumer builder, float red, float green, float blue, float alpha, float radius) {
         PoseStack.Pose matrixentry = stack.last();
