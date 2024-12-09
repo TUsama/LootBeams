@@ -1,4 +1,8 @@
 ### V2.1.1
+fix a double rarity text issue with Obscure Tooltips
+add Non soul rarity for MNS
+
+### V2.1.1
 fix an issue when legendary tooltips is installed
 fix a crash when mod try to wrap MNS's GearRarity to LBRarity.
 

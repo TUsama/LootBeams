@@ -21,7 +21,7 @@ import static io.vavr.API.*;
 
 public class MineAndSlashCompatModule implements ILBCompatModule {
 
-    private final static List<String> rarities = new ArrayList<>();
+    private final List<String> rarities = new ArrayList<>();
 
 
     @Override
