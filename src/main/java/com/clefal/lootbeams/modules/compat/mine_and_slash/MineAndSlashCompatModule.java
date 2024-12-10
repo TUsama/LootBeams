@@ -21,6 +21,8 @@ import static io.vavr.API.*;
 
 public class MineAndSlashCompatModule implements ILBCompatModule {
 
+    public final static MineAndSlashCompatModule INSTANCE = new MineAndSlashCompatModule();
+
     private final List<String> rarities = new ArrayList<>();
 
 
@@ -33,15 +35,15 @@ public class MineAndSlashCompatModule implements ILBCompatModule {
     public void tryEnable() {
         if (shouldBeEnable()) {
             LootBeams.LOGGER.info("Detected Mine and Slash, enable MineAndSlashCompatModule!");
-            LootBeams.EVENT_BUS.register(new MineAndSlashCompatModule());
-            rarities.add("common");
-            rarities.add("uncommon");
-            rarities.add("rare");
-            rarities.add("epic");
-            rarities.add("legendary");
-            rarities.add("mythic");
-            rarities.add("unique");
-            rarities.add("runeword");
+            LootBeams.EVENT_BUS.register(INSTANCE);
+            INSTANCE.rarities.add("common");
+            INSTANCE.rarities.add("uncommon");
+            INSTANCE.rarities.add("rare");
+            INSTANCE.rarities.add("epic");
+            INSTANCE.rarities.add("legendary");
+            INSTANCE.rarities.add("mythic");
+            INSTANCE.rarities.add("unique");
+            INSTANCE.rarities.add("runeword");
 
         }
     }

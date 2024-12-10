@@ -34,17 +34,12 @@ public class InternalLBItemEntityProvider implements ILBModulePersistentData {
 
     @Override
     public void initData() {
-        //vanilla rarity transform
-        sources.add(itemEntity -> Option.some(LBItemEntity.of(itemEntity, LBRarity.of(itemEntity.getItem().getRarity()))));
         ArrayList<ILBRarityApplier> appliers = new ArrayList<>();
         LootBeams.EVENT_BUS.post(new RegisterLBRarityEvent.Pre(appliers));
         LootBeams.EVENT_BUS.post(new RegisterLBRarityEvent.Post(appliers));
-        if (!appliers.isEmpty()) {
-            ListIterator<ILBRarityApplier> outsiders = appliers.listIterator(appliers.size());
-            while (outsiders.hasPrevious()) {
-                sources.addFirst(outsiders.previous());
-            }
-        }
+        sources.addAll(appliers);
+        //vanilla rarity transformer
+        sources.add(itemEntity -> Option.some(LBItemEntity.of(itemEntity, LBRarity.of(itemEntity.getItem().getRarity()))));
     }
 
     @Override

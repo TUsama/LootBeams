@@ -3,6 +3,7 @@ package com.clefal.lootbeams.modules;
 import com.clefal.lootbeams.modules.beam.BeamModule;
 import com.clefal.lootbeams.modules.compat.apothesis.ApotheosisCompatModule;
 import com.clefal.lootbeams.modules.compat.mine_and_slash.MineAndSlashCompatModule;
+import com.clefal.lootbeams.modules.compat.obscuretooltips.ObscureTooltipsCompatModule;
 import com.clefal.lootbeams.modules.dynamicprovider.DynamicProviderModule;
 import com.clefal.lootbeams.modules.sound.SoundModule;
 import com.clefal.lootbeams.modules.tooltip.TooltipsModule;
@@ -26,6 +27,7 @@ public class ModulesManager {
 
 
         list.add(new ApotheosisCompatModule());
-        list.add(new MineAndSlashCompatModule());
+        list.add(MineAndSlashCompatModule.INSTANCE);
+        list.add(ObscureTooltipsCompatModule.INSTANCE);
     }
 }

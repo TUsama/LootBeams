@@ -1,12 +1,13 @@
 package com.clefal.lootbeams.modules.tooltip.nametag;
 
 import com.clefal.lootbeams.Configuration;
+import com.clefal.lootbeams.LootBeams;
 import com.clefal.lootbeams.config.Config;
 import com.clefal.lootbeams.config.ConfigurationManager;
-import com.clefal.lootbeams.config.impl.TooltipsEnableStatus;
+import com.clefal.lootbeams.events.TooltipsGatherNameAndRarityEvent;
+import com.clefal.lootbeams.modules.tooltip.TooltipsEnableStatus;
 import com.clefal.lootbeams.data.LBItemEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
-import io.vavr.collection.Vector;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.player.LocalPlayer;
@@ -20,8 +21,6 @@ import net.minecraft.world.phys.Vec3;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class NameTagRenderer {
 
@@ -49,11 +48,13 @@ public class NameTagRenderer {
 
                 //Render stack counts on nametag
                 Font fontrenderer = Minecraft.getInstance().font;
-                var list = TooltipsEnableStatus.TooltipsStatus.safeGetNameAndRarity(LBItemEntity);
+                TooltipsGatherNameAndRarityEvent tooltipsGatherNameAndRarityEvent = new TooltipsGatherNameAndRarityEvent(LBItemEntity);
+                LootBeams.EVENT_BUS.post(tooltipsGatherNameAndRarityEvent);
+                List<Component> nameAndRarity = new ArrayList<>(tooltipsGatherNameAndRarityEvent.gather.values());
 
                 stack.translate(0, 2, -10);
 
-                for (Component c : list) {
+                for (Component c : nameAndRarity) {
                     String s = c.getString();
                     if (s.isBlank()) continue;
                     renderText(fontrenderer, stack, buffer, s, foregroundColor, backgroundColor, backgroundAlpha);

@@ -44,7 +44,8 @@ public class LBItemEntity {
     }
 
     public boolean isRare(){
-        Integer min = ConfigurationManager.<Integer>request(Config.SOUND_ORDINAL_MIN);
+        Integer min = ConfigurationManager.<Integer>request(Config.RARE_ORDINAL_MIN);
+
         return this.rarity.absoluteOrdinal() >= min;
     }
 }

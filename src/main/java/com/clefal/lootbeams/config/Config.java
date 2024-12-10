@@ -80,7 +80,7 @@ public enum Config {
     SOUND_ONLY_WHITELIST(List.class),
     SOUND_ONLY_BLACKLIST(List.class),
     SOUND_ALL_ITEMS(Boolean.class),
-    SOUND_ORDINAL_MIN(Integer.class),
+    RARE_ORDINAL_MIN(Integer.class),
 
 
 

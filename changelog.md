@@ -1,3 +1,7 @@
+### V2.1.2
+refactor the name and rarity collect pipeline, allowing additional external manipulation.
+
+
 ### V2.1.1
 fix a double rarity text issue with Obscure Tooltips
 add Non soul rarity for MNS

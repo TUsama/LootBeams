@@ -26,7 +26,6 @@ public class BeamRenderer {
 
     public static void renderLootBeam(PoseStack stack, MultiBufferSource buffer, float partialTick, LBItemEntity LBItemEntity) {
         ItemEntity itemEntity = LBItemEntity.item();
-
         Color color = LBItemEntity.rarity().color();
         int lifeTime = LBItemEntity.lifeTime();
         Integer fadeInTime = ConfigurationManager.<Integer>request(Config.BEAM_FADE_IN_TIME);

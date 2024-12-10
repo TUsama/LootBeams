@@ -163,7 +163,7 @@ dependencies {
     runtimeOnly fg.deobf("curse.maven:prism-lib-638111:4650325")
     runtimeOnly fg.deobf("curse.maven:iceberg-520110:5838149")
 
-    compileOnly fg.deobf("curse.maven:obscure-tooltips-715660:4686579")
+    implementation fg.deobf("curse.maven:obscure-tooltips-715660:4686579")
 
     minecraftLibrary "io.vavr:vavr:0.10.4"
     minecraftLibrary ("net.neoforged:bus:${neoforge_eventbus_version}") {

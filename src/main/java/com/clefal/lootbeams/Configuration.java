@@ -3,7 +3,7 @@ package com.clefal.lootbeams;
 import com.clefal.lootbeams.config.Config;
 import com.clefal.lootbeams.config.ConfigurationManager;
 import com.clefal.lootbeams.config.IConfigurationProvider;
-import com.clefal.lootbeams.config.impl.TooltipsEnableStatus;
+import com.clefal.lootbeams.modules.tooltip.TooltipsEnableStatus;
 import com.clefal.lootbeams.data.rarity.ConfigCustomRarity;
 import com.clefal.lootbeams.data.rarity.Order;
 import net.minecraftforge.common.ForgeConfigSpec;
@@ -82,7 +82,7 @@ public class Configuration implements IConfigurationProvider {
 	public static ForgeConfigSpec.ConfigValue<List<String>> SOUND_ONLY_WHITELIST;
 	public static ForgeConfigSpec.ConfigValue<List<String>> SOUND_ONLY_BLACKLIST;
 	public static ForgeConfigSpec.BooleanValue SOUND_ALL_ITEMS;
-	public static ForgeConfigSpec.IntValue SOUND_ORDINAL_MIN;
+	public static ForgeConfigSpec.IntValue RARE_ORDINAL_MIN;
 
 	public static ForgeConfigSpec.BooleanValue ENABLE_DYNAMIC_PROVIDER;
 	public static ForgeConfigSpec.IntValue HALF_ROUND_TICKS;
@@ -208,6 +208,8 @@ public class Configuration implements IConfigurationProvider {
 
 		ONLY_RARE = clientBuilder.comment("If Loot Beams should only be rendered on items with rarity.").define("only_rare", true);
 
+		RARE_ORDINAL_MIN = clientBuilder.comment("Should be noticed that this also control the sound.").defineInRange("rare_ordinal_min", 3, 0, 100);
+
 
 		ONLY_EQUIPMENT = clientBuilder.comment("If Loot Beams should only be rendered on equipment. (Equipment includes: Swords, Tools, Armor, Shields, Bows, Crossbows, Tridents, Arrows, and Fishing Rods)").define("only_equipment", true);
 
@@ -289,7 +291,6 @@ public class Configuration implements IConfigurationProvider {
 
 		SOUND_ONLY_BLACKLIST = clientBuilder.comment("Registry names of items that sounds should NOT play on. This has priority over everything. You can also specify modids for a whole mod's items.").define("sound_blacklist", new ArrayList<>());
 
-		SOUND_ORDINAL_MIN = clientBuilder.defineInRange("sound_ordinal_min", 3, 0, 100);
 
 
 
@@ -371,7 +372,7 @@ public class Configuration implements IConfigurationProvider {
 		ConfigurationManager.insert(Config.ENABLE_DYNAMIC_PROVIDER, () -> ENABLE_DYNAMIC_PROVIDER.get());
 		ConfigurationManager.insert(Config.HALF_ROUND_TICKS, () -> HALF_ROUND_TICKS.get());
 		ConfigurationManager.insert(Config.BEAM_FADE_IN_TIME, () -> BEAM_FADE_IN_TIME.get());
-		ConfigurationManager.insert(Config.SOUND_ORDINAL_MIN, () -> SOUND_ORDINAL_MIN.get());
+		ConfigurationManager.insert(Config.RARE_ORDINAL_MIN, () -> RARE_ORDINAL_MIN.get());
 		ConfigurationManager.insert(Config.SCREEN_TOOLTIPS_REQUIRE_CROUCH, () -> SCREEN_TOOLTIPS_REQUIRE_CROUCH.get());
 	}
 }
